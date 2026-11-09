@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="ckb" dir="rtl" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Tishk Renewable Energy - Solar CAD & Engineering Studio</title>
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;800&display=swap" rel="stylesheet">
+<style>i.fa-solid{font-style:normal;display:inline-block}i.fa-solar-panel::before{content:"☀️"}i.fa-cubes-stacked::before{content:"🧱"}i.fa-bolt-lightning::before{content:"⚡"}i.fa-car-battery::before{content:"🔋"}i.fa-chart-line::before{content:"📈"}i.fa-layer-group::before{content:"🗂️"}i.fa-certificate::before{content:"🏅"}i.fa-bolt::before{content:"⚡"}i.fa-shield-halved::before{content:"🛡️"}i.fa-coins::before{content:"🪙"}i.fa-arrows-rotate::before{content:"🔄"}i.fa-compass::before{content:"🧭"}i.fa-hand-pointer::before{content:"👆"}i.fa-chart-simple::before{content:"📊"}i.fa-smog::before{content:"🌫️"}i.fa-tree::before{content:"🌳"}i.fa-circle-check::before{content:"✅"}i.fa-print::before{content:"🖨️"}i.fa-file-invoice::before{content:"🧾"}i.fa-xmark::before{content:"✕"}i.fa-list-check::before{content:"📋"}i.fa-leaf::before{content:"🍃"}</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+tailwind.config = { darkMode: 'class', theme: { extend: { fontFamily: { sans: ['Vazirmatn', 'system-ui', 'sans-serif'] } } } }
+</script>
+<style type="text/tailwindcss">
+  @layer components {
+    .fld { @apply bg-slate-950 p-2.5 rounded-xl border border-slate-800; }
+    .lb { @apply text-slate-400 block mb-1; }
+    .inp { @apply w-full bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-center font-bold; }
+    .sel { @apply w-full bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-slate-200; }
+    .big { @apply w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none; }
+    .cell { @apply bg-slate-900 p-2 rounded border border-slate-800; }
+    .row { @apply flex justify-between; }
+    .tab-btn { @apply flex-1 py-2 px-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800 transition flex items-center justify-center gap-1.5; }
+    .hdr { @apply flex items-center justify-between border-b border-slate-800 pb-2; }
+    .metric { @apply bg-slate-900/90 border border-slate-800 p-3.5 rounded-2xl flex flex-col justify-between shadow-lg; }
+    .metric-h { @apply flex items-center justify-between text-slate-400 text-xs mb-1; }
+  }
+</style>
+<style>
+  body { font-family: 'Vazirmatn', system-ui, sans-serif; -webkit-font-smoothing: antialiased; user-select: none; -webkit-user-select: none; }
+  #panelPreset,#inverterBrand,#batteryBrand{order:2}.ord1{order:1}.ord3{order:3}#tabContent-settings{order:2}#dash,#dash *{-webkit-print-color-adjust:exact;print-color-adjust:exact}#setGrid>div:nth-child(1){background:linear-gradient(135deg,#78350f66,#0f172a)}#setGrid>div:nth-child(2){background:linear-gradient(135deg,#88133766,#0f172a)}#setGrid>div:nth-child(3){background:linear-gradient(135deg,#5b21b666,#0f172a)}#setGrid>div:nth-child(4){background:linear-gradient(135deg,#0c4a6e66,#0f172a)}#setGrid>div:nth-child(5){background:linear-gradient(135deg,#06503766,#0f172a)}#setGrid>div:nth-child(6){background:linear-gradient(135deg,#134e4a66,#0f172a)}
+  /* FIX 1: allow typing in fields (iOS/Safari) */
+  input, select, textarea { -webkit-user-select: text; user-select: text; }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: #0f172a; }
+  ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: #10b981; }
+  .tab-btn.active { background: #059669; color: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.4); }
+  @media print {
+    body * { visibility: hidden; }
+    #printProposalModal, #printProposalModal * { visibility: visible; }
+    #printProposalModal { position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0; background: white !important; color: black !important; display: block !important; }
+    .no-print { display: none !important; }
+  }
+</style>
+<style>
+html,body{overflow-x:hidden}
+#splash{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 42%,#ffffff 0%,#f1f8ff 60%,#e3f1fd 100%);transition:opacity .9s ease,visibility .9s;cursor:pointer;overflow:hidden;direction:ltr}
+#splash.out{opacity:0;visibility:hidden}
+#splash.out .lg{transform:scale(1.08);opacity:0}
+.lg{width:min(92vw,820px);height:auto;overflow:visible;transition:transform .9s ease,opacity .9s ease}
+.lg *{transform-box:fill-box}
+.lg-sun{transform-origin:50% 50%;animation:lgSun 3s .3s ease-in-out infinite,lgFade 1s .3s both;opacity:0}
+.lg-panel{animation:lgPanel 1s .25s cubic-bezier(.2,.8,.2,1) both}
+.lg-stem{transform-origin:50% 0;animation:lgStem .8s 1.05s cubic-bezier(.3,.9,.3,1) both}
+.lg-shine{animation:lgShine 2.6s 1.6s ease-in-out infinite}
+.lg-t{animation:lgText .9s 1.4s cubic-bezier(.2,.8,.2,1) both}
+.lg-s{animation:lgSub .8s 1.9s cubic-bezier(.2,.8,.2,1) both}
+.lg-bar{width:min(55vw,240px);height:3px;border-radius:3px;background:#dbeafe;overflow:hidden;margin-top:26px;opacity:0;animation:lgFade .5s 1.5s forwards}
+.lg-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#1DA1F2,#fbbf24);animation:lgLoad 2.6s 1.5s ease-in-out forwards}
+.lg-skip{margin-top:10px;font:12px 'Vazirmatn',sans-serif;color:#94a3b8;opacity:0;animation:lgFade .6s 2.4s forwards}
+@keyframes lgFade{to{opacity:1}}
+@keyframes lgSun{0%,100%{transform:scale(.9)}50%{transform:scale(1.18)}}
+@keyframes lgPanel{from{transform:translate(-140px,-110px) rotate(-6deg);opacity:0}to{transform:none;opacity:1}}
+@keyframes lgStem{from{transform:scaleY(0);opacity:0}to{transform:none;opacity:1}}
+@keyframes lgShine{0%{transform:translateX(-200px)}55%,100%{transform:translateX(330px)}}
+@keyframes lgText{from{transform:translateX(-50px);opacity:0}to{transform:none;opacity:1}}
+@keyframes lgSub{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
+@keyframes lgLoad{to{width:100%}}
+</style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased overflow-x-hidden">
+<div id="splash" onclick="hideSplash()">
+  <svg class="lg" viewBox="340 330 1240 400" role="img" aria-label="Tishk Renewable Energy">
+    <defs>
+      <radialGradient id="lgGlow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fbbf24" stop-opacity=".55"/><stop offset="1" stop-color="#fbbf24" stop-opacity="0"/></radialGradient>
+      <linearGradient id="lgSh" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".7"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+      <clipPath id="lgClip"><polygon points="497,384 756,384 652,497 382,497"/></clipPath>
+    </defs>
+    <circle class="lg-sun" cx="720" cy="360" r="170" fill="url(#lgGlow)"/>
+    <g class="lg-panel">
+      <polygon class="lg-panel-shape" points="497,384 756,384 652,497 382,497" fill="#1DA1F2" stroke="#1DA1F2" stroke-width="7" stroke-linejoin="round"/>
+      <g stroke="#fff" stroke-opacity=".38" stroke-width="2.5" clip-path="url(#lgClip)"><line x1="540.2" y1="384" x2="427.0" y2="497"/><line x1="583.3" y1="384" x2="472.0" y2="497"/><line x1="626.5" y1="384" x2="517.0" y2="497"/><line x1="669.7" y1="384" x2="562.0" y2="497"/><line x1="712.8" y1="384" x2="607.0" y2="497"/><line x1="458.7" y1="421.7" x2="721.3" y2="421.7"/><line x1="420.3" y1="459.3" x2="686.7" y2="459.3"/></g>
+      <g clip-path="url(#lgClip)"><rect class="lg-shine" x="380" y="380" width="70" height="120" fill="url(#lgSh)" transform="skewX(-25)"/></g>
+    </g>
+    <g class="lg-stem"><polygon points="538,505 621,505 621,597 530,690 506,694 506,540" fill="#1DA1F2" stroke="#1DA1F2" stroke-width="7" stroke-linejoin="round"/></g>
+    <text class="lg-t" x="780" y="577" font-family="Montserrat,'Segoe UI',Arial,sans-serif" font-weight="800" font-size="275" textLength="723" lengthAdjust="spacingAndGlyphs" fill="#14181b">Tishk</text>
+    <text class="lg-s" x="792" y="672" font-family="Montserrat,'Segoe UI',Arial,sans-serif" font-weight="500" font-size="80" textLength="735" lengthAdjust="spacingAndGlyphs" fill="#14181b">Renewable Energy</text>
+  </svg>
+  <div class="lg-bar"><i></i></div>
+  <div class="lg-skip">کلیک بکە بۆ تێپەڕین</div>
+</div>
+
+<!-- HEADER -->
+<header class="bg-slate-900/90 backdrop-blur-md border-b border-slate-800 sticky top-0 z-40 px-4 lg:px-6 py-2.5">
+  <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-lg shadow-sky-500/20"><svg viewBox="372 374 396 330" class="w-6 h-6"><polygon points="497,384 756,384 652,497 382,497" fill="#1DA1F2" stroke="#1DA1F2" stroke-width="7" stroke-linejoin="round"/><polygon points="538,505 621,505 621,597 530,690 506,694 506,540" fill="#1DA1F2" stroke="#1DA1F2" stroke-width="7" stroke-linejoin="round"/></svg></div>
+      <div>
+        <h1 class="font-extrabold text-base md:text-lg tracking-wide text-white flex items-center gap-2">
+          <span>Tishk Renewable Energy</span>
+          <span class="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/30 font-medium">CAD Pro 2026</span>
+        </h1>
+        <p class="text-xs text-slate-400">سیستەمی هەمەلایەنەی دیزاینی 3D CAD، حیساباتی پڕۆژەی ڕووناکی و گرێبەستی کڕیار</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-3 text-xs">
+      <div class="bg-slate-800/80 border border-slate-700/60 px-3 py-1.5 rounded-lg flex items-center gap-2">
+        <span class="text-slate-400">توانای گشتی:</span>
+        <span id="headerTotalKwp" class="font-bold text-amber-400 text-sm">-</span>
+      </div>
+      <div class="bg-slate-800/80 border border-slate-700/60 px-3 py-1.5 rounded-lg hidden sm:flex items-center gap-2">
+        <span class="text-slate-400">بەرهەمی ساڵانە:</span>
+        <span id="headerAnnualKwh" class="font-bold text-emerald-400 text-sm">-</span>
+      </div>
+      <button onclick="openProposalModal()" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold px-4 py-1.5 rounded-lg shadow-md transition flex items-center gap-2 text-xs">
+        <i class="fa-solid fa-file-invoice text-sm"></i><span>ڕاپۆرت و گرێبەست</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="flex-1 max-w-7xl w-full mx-auto p-3 lg:p-5 flex flex-col lg:flex-row gap-5">
+
+  <!-- LEFT: CONTROLS -->
+  <div class="w-full lg:w-[480px] xl:w-[520px] flex flex-col gap-4 flex-shrink-0">
+
+    <div class="bg-slate-900 border border-slate-800 p-1.5 rounded-2xl flex flex-wrap gap-1 text-xs font-semibold shadow-inner">
+      <button onclick="switchTab('structures')" id="tabBtn-structures" class="tab-btn active"><i class="fa-solid fa-cubes-stacked"></i><span>١. ستراکچەر</span></button>
+      <button onclick="switchTab('panels')" id="tabBtn-panels" class="tab-btn"><i class="fa-solid fa-solar-panel"></i><span>٢. لوحەکان</span></button>
+      <button onclick="switchTab('inverter')" id="tabBtn-inverter" class="tab-btn"><i class="fa-solid fa-bolt-lightning"></i><span>٣. ئینڤێرتەر</span></button>
+      <button onclick="switchTab('battery')" id="tabBtn-battery" class="tab-btn"><i class="fa-solid fa-car-battery"></i><span>٤. پاتری</span></button>
+      <button onclick="switchTab('rwnaki')" id="tabBtn-rwnaki" class="tab-btn"><i class="fa-solid fa-chart-line"></i><span>٥. ڕووناکی، دارایی و ڕێکخستن</span></button>
+      <button onclick="switchTab('calc')" id="tabBtn-calc" class="tab-btn"><span>🧮 ٦. حیسابی تەواو</span></button>
+      <button onclick="switchTab('climate')" id="tabBtn-climate" class="tab-btn"><span>🌦️ ٧. کەشوهەوا</span></button>
+    </div>
+
+    <div class="bg-slate-900/95 border border-slate-800 rounded-2xl p-4 lg:p-5 shadow-xl flex-1 flex flex-col justify-between overflow-y-auto max-h-[750px]">
+
+      <!-- TAB 1 -->
+      <div id="tabContent-structures" class="tab-pane flex flex-col gap-4">
+        <div class="hdr">
+          <div>
+            <h2 class="font-bold text-white text-sm flex items-center gap-2"><i class="fa-solid fa-layer-group text-emerald-400"></i><span>دیاریکردنی شێوازی ستراکچەر (١٠ جۆری ستاندارد)</span></h2>
+            <p class="text-xs text-slate-400">ئەندازەی تەلارسازی، مادەی کانزایی و ڕاگر</p>
+          </div>
+          <span class="text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded border border-slate-700">CAD Config</span>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1.5">جۆری دیزاینی ستراکچەر (Structure Type):</label>
+          <select id="structureType" onchange="onStructureChange()" class="big focus:border-emerald-500">
+            <option value="sandwich">١. ساندوێچ پەنەڵ (Sandwich Panel Clamps Mount)</option>
+            <option value="ground">٢. ساحەی کراوە / زەمینی (Open Ground Rammed Post)</option>
+            <option value="carport" selected>٣. کەپری ئۆتۆمبێل (Carport Parking Canopy)</option>
+            <option value="aframe">٤. ستراکچەری ئاسایی ستاندارد (A-Frame Flat Roof)</option>
+            <option value="pergola">٥. پێرگۆلا دۆستی تەلارسازی (Architectural Pergola)</option>
+            <option value="minirail">٦. مینی ڕەیڵ هێڵی (Mini-Rail Corrugated Mount)</option>
+            <option value="monopole">٧. تاک ستوونی بەهێز (Heavy-Duty Monopole)</option>
+            <option value="ballasted">٨. بەلاستی کۆنکرێتی بێ کونکردن (Ballasted Flat Roof)</option>
+            <option value="facade">٩. فەساد و دیواری بینا (Vertical BIPV Facade)</option>
+            <option value="multitier">١٠. فرە ئاستی بەرزکراوە (Multi-Tier Roof Racks)</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 text-xs">
+          <div class="fld"><label class="lb">ژمارەی ڕیز (Rows):</label>
+            <div class="flex items-center gap-2"><input type="number" id="structRows" min="1" max="10" value="2" oninput="updateSystemCalculations()" class="inp text-white"><span class="text-slate-500">ڕیز</span></div></div>
+          <div class="fld"><label class="lb">ژمارەی ستوون (Cols):</label>
+            <div class="flex items-center gap-2"><input type="number" id="structCols" min="1" max="30" value="10" oninput="updateSystemCalculations()" class="inp text-white"><span class="text-slate-500">لوحە</span></div></div>
+          <div class="fld"><label class="lb">پلەی لاربوونەوە (Tilt Angle):</label>
+            <div class="flex items-center justify-between gap-2">
+              <!-- FIX 3: max=90 so facade (85°) works -->
+              <input type="range" id="structTilt" min="0" max="90" value="18" oninput="document.getElementById('tiltVal').innerText = this.value + '°'; updateSystemCalculations();" class="w-full accent-emerald-500">
+              <span id="tiltVal" class="font-bold text-emerald-400 text-xs w-8 text-left">18°</span>
+            </div></div>
+          <div class="fld"><label class="lb">ئاراستە (Azimuth):</label>
+            <select id="structAzimuth" onchange="updateSystemCalculations()" class="sel">
+              <option value="180">باشووری تەواو (180° South - باشترین بۆ کوردستان)</option>
+              <option value="160">باشووری ڕۆژهەڵات (160° SE)</option>
+              <option value="200">باشووری ڕۆژئاوا (200° SW)</option>
+              <option value="90">ڕۆژهەڵات تەواو (90° East)</option>
+              <option value="270">ڕۆژئاوا تەواو (270° West)</option>
+            </select></div>
+          <div class="fld"><label class="lb">بەرزی پێشەوە (Front Clear):</label>
+            <div class="flex items-center gap-2"><input type="number" id="frontHeight" step="0.1" min="0.1" max="5" value="2.3" oninput="updateSystemCalculations()" class="inp text-slate-200"><span class="text-slate-500">مەتر</span></div></div>
+          <div class="fld"><label class="lb">ماددەی ستراکچەر:</label>
+            <select id="rackMaterial" onchange="updateSystemCalculations()" class="sel">
+              <option value="alu">ئەلەمنیۆم AL6005-T5 پڕۆفایل</option>
+              <option value="hdg">ئاسنی گالڤانایز HDG (سارد و گەرم)</option>
+              <option value="magnesium">پۆڵای Zincalume / ZAM باڵا</option>
+            </select></div>
+        </div>
+
+        <div class="bg-emerald-950/20 border border-emerald-500/30 rounded-xl p-3 text-xs space-y-1.5">
+          <div class="row"><span class="text-slate-400">کۆی لوحەکانی ئەم ڕێزبەندییە:</span><span id="structTotalPanels" class="font-bold text-emerald-400">-</span></div>
+          <div class="row"><span class="text-slate-400">ڕووبەری پێویست لەسەر زەوی/سەربان:</span><span id="structAreaNeeded" class="font-bold text-slate-200">-</span></div>
+          <div class="row"><span class="text-slate-400">بەرگەگرتنی با (Wind Load):</span><span class="text-amber-300 font-semibold">بە حیسابی ئەندازیاری ڕاست بکەرەوە (ناوچە و بەرزی)</span></div>
+        </div>
+      </div>
+
+      <!-- TAB 2 -->
+      <div id="tabContent-panels" class="tab-pane hidden flex flex-col gap-4">
+        <div class="hdr">
+          <div>
+            <h2 class="font-bold text-white text-sm flex items-center gap-2"><i class="fa-solid fa-solar-panel text-amber-400"></i><span>کۆگای لوحە تیشکییەکان (Tier-1 Global Brands)</span></h2>
+            <p class="text-xs text-slate-400">تایبەتمەندی N-Type, TopCon, Bifacial و توانای لووتکە</p>
+          </div>
+          <span class="text-xs bg-slate-800 text-amber-300 px-2 py-0.5 rounded border border-slate-700">Tier-1</span>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="block text-xs font-semibold text-slate-300" style="order:0">براند ← مۆدێل ← توانا (W):</label>
+          <select id="panelBrand" onchange="onPanelChange()" class="big ord1"></select>
+          <select id="panelSize" onchange="onPanelChange()" class="big ord3"></select>
+          <select id="panelPreset" onchange="onPanelChange()" class="big focus:border-amber-500">
+            <option value="longi-600">Longi Hi-MO X6 Max Explorer 600W (HPBC Cell Tech)</option>
+            <option value="longi-585" selected>Longi Hi-MO 7 Bifacial Dual-Glass 585W (N-Type TOPCon)</option>
+            <option value="longi-630">Longi Hi-MO 9 Ultra-High 630W (BC Technology)</option>
+            <option value="jinko-620">Jinko Tiger Neo N-Type 72HL4-BDV 620W Bifacial</option>
+            <option value="trina-690">Trina Vertex N NEG21C.20 690W Ultra-High Power</option>
+            <option value="canadian-660">Canadian Solar TOPHiKu7 BiHiKu7 660W N-Type</option>
+            <option value="ja-600">JA Solar DeepBlue 4.0 Pro 600W MBB Half-Cell</option>
+          </select>
+        </div>
+        <div class="grid grid-cols-2 gap-3 text-xs">
+          <div class="fld"><span class="lb mb-0.5">توانای هەر لوحەیەک (Pmax):</span>
+            <div class="flex items-center gap-1"><input type="number" id="panelWatt" value="585" oninput="updateSystemCalculations()" class="w-24 bg-slate-900 border border-slate-700 rounded px-2 py-1 font-bold text-amber-400 text-sm"><span class="text-slate-400">وات (W)</span></div></div>
+          <div class="fld"><span class="lb mb-0.5">کارایی لوحە (Efficiency):</span><span id="panelEff" class="font-bold text-emerald-400 text-sm">22.6%</span></div>
+          <div class="fld"><span class="lb mb-0.5">جۆری ڕووەکان:</span><span id="panelBifacial" class="font-bold text-slate-200">-</span></div>
+          <div class="fld"><span class="lb mb-0.5">قەبارە و ئەندازە:</span><span id="panelDims" class="font-bold text-slate-300">-</span></div>
+          <div class="fld"><span class="lb mb-0.5">بڕی گەرما (Temp Coeff):</span><span class="text-slate-300">نزیکەی -0.29% / °C (بڕوانە datasheet)</span></div>
+          <div class="fld"><span class="lb mb-0.5">گرەنتی کارکردن:</span><span class="text-emerald-400 font-bold">12 ساڵ کەرەستە / 30 ساڵ بەرهەمهێنان</span></div>
+        </div>
+        <div class="bg-amber-950/20 border border-amber-500/30 rounded-xl p-3 text-xs flex items-center gap-3">
+          <i class="fa-solid fa-certificate text-amber-400 text-xl"></i>
+          <div>
+            <p class="font-bold text-amber-300">پشکنینی پلەی یەکەم (Tier-1 Quality Assurance)</p>
+            <p class="text-slate-400 text-[11px]">ئەندازە و بازدەی لوحەکان مەزەندەن؛ پێش پێشکەشکردن بە کڕیار لە datasheet ـی فەرمی دڵنیا ببەوە.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3 -->
+      <div id="tabContent-inverter" class="tab-pane hidden flex flex-col gap-4">
+        <div class="hdr">
+          <div>
+            <h2 class="font-bold text-white text-sm flex items-center gap-2"><i class="fa-solid fa-bolt text-teal-400"></i><span>ئینڤێرتەری زیرەک (١٠ باشترین براندی جیهانی)</span></h2>
+            <p class="text-xs text-slate-400">هایبرید، ئۆن-گرید، ئۆف-گرید و هاوسەنگی فەیزەکان</p>
+          </div>
+          <span class="text-xs bg-slate-800 text-teal-300 px-2 py-0.5 rounded border border-slate-700">Inverter Tech</span>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="block text-xs font-semibold text-slate-300" style="order:0">براند ← مۆدێل ← حەجم (kW):</label>
+          <select id="invBrand" onchange="onInverterChange()" class="big ord1"></select>
+          <select id="invSize" onchange="onInverterChange()" class="big ord3"></select>
+          <select id="inverterBrand" onchange="onInverterChange()" class="big focus:border-teal-500">
+            <option value="deye-hybrid" selected>Deye 12kW Three-Phase Hybrid (SUN-12K-SG04LP3)</option>
+            <option value="huawei-hybrid">Huawei SUN2000-10KTL-M1 High-Voltage Hybrid Smart PV</option>
+            <option value="growatt-sph">Growatt SPH 10000TL3-BH-UP Three-Phase Storage</option>
+            <option value="sungrow-hybrid">Sungrow SH10RT 10kW 3-Phase Residential Hybrid</option>
+            <option value="sma-tripower">SMA Sunny Tripower Smart Energy 10.0 (ئەڵمانی فەرمی)</option>
+            <option value="solis-hybrid">Solis S6 Pro Advanced Hybrid 12kW 3-Phase</option>
+            <option value="victron-multi">Victron Energy Quattro-II 48/10000 VA (هۆڵەندی بێهاوتا)</option>
+            <option value="goodwe-et">GoodWe ET Series 10kW High Voltage Hybrid</option>
+            <option value="fronius-gen24">Fronius Symo GEN24 Plus 10.0kW (نەمساوی)</option>
+            <option value="sofar-hyd">Sofar Solar HYD 15KTL-3PH Energy Storage</option>
+          </select>
+        </div>
+        <div class="grid grid-cols-2 gap-3 text-xs">
+          <div class="fld"><label class="lb">شێوازی کارکردنی سیستم:</label>
+            <select id="systemTopology" onchange="updateSystemCalculations()" class="sel">
+              <option value="hybrid" selected>هایبرید پاتریدار (Hybrid + Battery)</option>
+              <option value="ongrid">ئۆن-گرید بێ پاتری (On-Grid)</option>
+              <option value="offgrid">ئۆف-گرید سەربەخۆ (Off-Grid)</option>
+            </select></div>
+          <div class="fld"><label class="lb">جۆری فەیز و ڤۆڵتیە:</label>
+            <select id="inverterPhase" onchange="updateSystemCalculations()" class="sel">
+              <option value="3phase" selected>سێ فەیز (3-Phase 380V / 400V)</option>
+              <option value="1phase">سینگڵ فەیز (Single-Phase 220V - 230V)</option>
+            </select></div>
+          <div class="fld"><span class="lb">پلەی پاراستن (Enclosure):</span>
+            <span class="font-bold text-teal-400 flex items-center gap-1.5"><i class="fa-solid fa-shield-halved"></i><span>IP65 / IP66 (Outdoor)</span></span></div>
+          <div class="fld"><span class="lb">چەناڵی MPPT:</span><span class="font-bold text-slate-200">2 سەربەخۆ (Dual MPPT)</span></div>
+        </div>
+        <div class="fld text-xs">
+          <span class="text-slate-400 font-semibold block mb-2">هاوسەنگکردنی فەیزەکان (جەریانی مەزەندەکراو):</span>
+          <div class="grid grid-cols-3 gap-2 text-center">
+            <div class="cell"><span class="text-slate-500 block text-[10px]">L1</span><span class="font-bold text-amber-400" id="phaseL1">-</span></div>
+            <div class="cell"><span class="text-slate-500 block text-[10px]">L2</span><span class="font-bold text-amber-400" id="phaseL2">-</span></div>
+            <div class="cell"><span class="text-slate-500 block text-[10px]">L3</span><span class="font-bold text-amber-400" id="phaseL3">-</span></div>
+          </div>
+        </div>
+        <!-- FIX 5: DC/AC ratio check -->
+        <div class="fld text-xs">
+          <div class="row"><span class="text-slate-400">توانای ئینڤێرتەر (AC):</span><span id="invPowerLabel" class="font-bold text-slate-200">-</span></div>
+          <div id="dcAcRatio" class="font-bold text-teal-400 mt-1.5">-</div>
+        </div>
+      </div>
+
+      <!-- TAB 4 -->
+      <div id="tabContent-battery" class="tab-pane hidden flex flex-col gap-4">
+        <div class="hdr">
+          <div>
+            <h2 class="font-bold text-white text-sm flex items-center gap-2"><i class="fa-solid fa-car-battery text-blue-400"></i><span>کۆگای پاتری لیسیۆم (١٠ براندی باڵای جیهان)</span></h2>
+            <p class="text-xs text-slate-400">تەکنەلۆژیای LiFePO4 و ژمارەی خول</p>
+          </div>
+          <span class="text-xs bg-slate-800 text-blue-300 px-2 py-0.5 rounded border border-slate-700">Storage</span>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="block text-xs font-semibold text-slate-300" style="order:0">براند ← مۆدێل ← حەجمی هەر یەکەیەک (kWh):</label>
+          <select id="batBrand" onchange="onBatteryChange()" class="big ord1"></select>
+          <select id="batSize" onchange="onBatteryChange()" class="big ord3"></select>
+          <select id="batteryBrand" onchange="onBatteryChange()" class="big focus:border-blue-500">
+            <option value="dyness-10" selected>Dyness Powerbox Pro LiFePO4 10.24 kWh (51.2V 200Ah)</option>
+            <option value="pylontech-us5000">Pylontech US5000 Modular 4.8 kWh Rack Mount</option>
+            <option value="deye-se-g51">Deye SE-G5.1 Pro 5.12 kWh 51.2V 100Ah LFP</option>
+            <option value="byd-hvs">BYD Battery-Box Premium HVS High-Voltage 10.2 kWh</option>
+            <option value="huawei-luna">Huawei LUNA2000 Smart String 15 kWh Modular</option>
+            <option value="felicity-15">Felicity Solar 15 kWh 48V Wall Mounted Battery</option>
+            <option value="growatt-ark">Growatt ARK 2.5L-A1 Stackable System 10 kWh</option>
+            <option value="sungrow-sbh">Sungrow SBR High-Voltage Modular 12.8 kWh</option>
+            <option value="tesla-powerwall">Tesla Powerwall 2 / 3 Li-Ion Storage 13.5 kWh</option>
+            <option value="freedomwon">Freedomwon Lite Home LiFePO4 15 kWh Heavy Duty</option>
+          </select>
+        </div>
+        <div class="grid grid-cols-2 gap-3 text-xs">
+          <div class="fld"><label class="lb">ژمارەی یەکەی پاتری (Units):</label>
+            <div class="flex items-center gap-2"><input type="number" id="batteryQty" min="1" max="10" value="2" oninput="updateSystemCalculations()" class="inp text-blue-400"><span class="text-slate-400">یەکە</span></div></div>
+          <div class="fld"><span class="lb">کۆی گشتی وزەی کۆکراوە:</span><span id="totalBatteryKwh" class="font-bold text-blue-400 text-sm">-</span></div>
+          <div class="fld"><span class="lb">قووڵی بەکارهێنان (DoD):</span><span id="dodTxt" class="font-bold text-slate-200">-</span></div>
+          <div class="fld"><span class="lb">تەمەنی کارکردن (Cycle Life):</span><span id="cycTxt" class="text-emerald-400 font-bold">-</span></div>
+        </div>
+        <div class="bg-blue-950/20 border border-blue-500/30 rounded-xl p-3 text-xs space-y-1">
+          <div class="row"><span class="text-slate-400">کاتی بەردەوامی لە کاتی نەبوونی کارەبا:</span><span id="backupHours" class="font-bold text-white">-</span></div>
+          <div class="row"><span class="text-slate-400">پەیوەندی BMS:</span><span class="text-blue-300 font-semibold">CAN / RS485 لەگەڵ ئینڤێرتەر</span></div>
+        </div>
+      </div>
+
+      <div id="tabContent-rwnaki" class="tab-pane hidden flex flex-col gap-4"></div>
+    </div>
+  </div>
+
+  <!-- RIGHT: 3D + DASHBOARD -->
+  <div class="flex-1 flex flex-col gap-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-2 relative shadow-2xl overflow-hidden flex flex-col h-[420px] lg:h-[480px]">
+      <div class="absolute top-3 left-3 z-10 flex items-center gap-2 max-w-[56%]">
+        <div class="bg-slate-950/80 backdrop-blur border border-slate-700/80 rounded-xl px-3 py-1.5 flex items-center gap-2 text-xs text-slate-300 shadow-lg min-w-0">
+          <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
+          <span class="font-semibold truncate" id="view3dStructureLabel">کەپری ئۆتۆمبێل (Carport 3D Model)</span>
+        </div>
+        <button onclick="reset3DCamera()" class="bg-slate-950/80 backdrop-blur border border-slate-700/80 hover:bg-slate-800 text-slate-300 p-2 rounded-xl text-xs transition" title="گەڕاندنەوەی کامێرا"><i class="fa-solid fa-arrows-rotate"></i></button>
+      </div>
+      <div class="absolute top-3 right-3 z-10 bg-slate-950/80 backdrop-blur border border-slate-700/80 rounded-xl px-3 py-1.5 flex items-center gap-2 text-xs shadow-lg">
+        <i class="fa-solid fa-compass text-rose-500"></i><span class="text-slate-300">ئاراستە:</span>
+        <span id="compassLabel" class="text-rose-400 font-bold">باشوور (180°)</span>
+      </div>
+      <div id="threeContainer" class="w-full h-full rounded-xl overflow-hidden cursor-grab active:cursor-grabbing bg-gradient-to-b from-slate-900 to-slate-950"></div>
+      <div class="absolute bottom-3 left-1/2 -translate-x-1/2 text-[11px] text-slate-400 bg-slate-950/70 backdrop-blur px-3 py-1 rounded-full border border-slate-800 pointer-events-none flex items-center gap-2 whitespace-nowrap">
+        <i class="fa-solid fa-hand-pointer text-emerald-400"></i><span>بۆ سووڕاندن ڕابکێشە | بۆ نزیکبوونەوە سکڕۆڵ بەکاربێنە</span>
+      </div>
+    </div>
+
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3 flex flex-col gap-2 text-xs">
+      <div class="flex flex-wrap items-center justify-between gap-2"><span class="font-bold text-white">🏠 دانانی ستراکچەر لەسەر وێنەی سەربان</span>
+        <label class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3 py-1.5 rounded-lg cursor-pointer">📷 وێنە هەڵبژێرە<input type="file" accept="image/*" class="hidden" onchange="loadRoof(event)"></label></div>
+      <div class="grid grid-cols-2 gap-2">
+        <div class="fld"><label class="lb">پانی ڕاستەقینەی وێنەکە (مەتر)</label><input id="roofImgW" type="number" value="12" min="1" oninput="redrawRoof()" class="inp text-white"></div>
+        <div class="fld"><label class="lb">سووڕاندن: <span id="roofRotV">0°</span></label><input type="range" id="roofRot" min="0" max="360" value="0" oninput="roof.rot=+this.value;setText('roofRotV',this.value+'°');redrawRoof()" class="w-full accent-emerald-500"></div>
+      </div>
+      <canvas id="roofCanvas" width="800" height="450" class="w-full rounded-xl bg-slate-950 border border-slate-800" style="touch-action:none"></canvas>
+      <div id="roofInfo" class="text-slate-400"></div>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div class="metric"><div class="metric-h"><span>کۆی لووتکەی وزە</span><i class="fa-solid fa-bolt-lightning text-amber-400"></i></div><div><div id="dashTotalKwp" class="text-xl lg:text-2xl font-black text-amber-400">-</div><div class="text-[11px] text-slate-400">کیلۆوات لووتکە (kWp DC)</div></div></div>
+      <div class="metric"><div class="metric-h"><span>بەرهەمی مانگانە</span><i class="fa-solid fa-chart-simple text-emerald-400"></i></div><div><div id="dashMonthlyKwh" class="text-xl lg:text-2xl font-black text-emerald-400">-</div><div class="text-[11px] text-slate-400">کیلۆوات کاتژمێر (kWh)</div></div></div>
+      <div class="metric"><div class="metric-h"><span>کەمکردنەوەی CO₂</span><i class="fa-solid fa-smog text-teal-400"></i></div><div><div id="dashCo2Tons" class="text-xl lg:text-2xl font-black text-teal-400">-</div><div class="text-[11px] text-slate-400">تەن گازی ساڵانە</div></div></div>
+      <div class="metric"><div class="metric-h"><span>بەرامبەر درەخت</span><i class="fa-solid fa-tree text-emerald-500"></i></div><div><div id="dashTreesCount" class="text-xl lg:text-2xl font-black text-emerald-500">-</div><div class="text-[11px] text-slate-400">درەختی چێنراو ساڵانە</div></div></div>
+    </div>
+
+    <div class="bg-slate-900/90 border border-slate-800 p-3 rounded-2xl flex flex-wrap items-center justify-between gap-3 text-xs">
+      <div class="flex items-center gap-2 text-slate-400"><i class="fa-solid fa-circle-check text-emerald-400"></i><span>حسابات مەزەندەن و پێویستیان بە پشکنینی ئەندازیاری هەیە</span></div>
+      <button onclick="openProposalModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2 rounded-xl transition flex items-center gap-2 shadow-lg shadow-emerald-600/20">
+        <i class="fa-solid fa-print"></i><span>چاپکردنی ڕاپۆرتی ئەندازیاری (Print Proposal)</span>
+      </button>
+    </div>
+  </div>
+</main>
+
+<!-- PROPOSAL MODAL -->
+<div id="printProposalModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-3 lg:p-6 overflow-y-auto">
+  <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-4xl w-full p-6 lg:p-8 shadow-2xl relative my-auto text-slate-100 max-h-[90vh] overflow-y-auto">
+    <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-6 no-print">
+      <div class="flex items-center gap-2">
+        <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-2 shadow"><i class="fa-solid fa-print"></i><span>چاپکردن (Print / Save as PDF)</span></button>
+        <span class="text-xs text-slate-400">دەتوانیت ڕاستەوخۆ بیکەیتە PDF</span>
+      </div>
+      <button onclick="closeProposalModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <div class="space-y-6 text-sm" id="officialProposalPaper">
+      <div class="flex items-center justify-between border-b-2 border-emerald-500 pb-4">
+        <div>
+          <div class="flex items-center gap-3"><div class="w-12 h-12 rounded-xl bg-white flex items-center justify-center"><svg viewBox="372 374 396 330" class="w-8 h-8"><polygon points="497,384 756,384 652,497 382,497" fill="#1DA1F2" stroke="#1DA1F2" stroke-width="7" stroke-linejoin="round"/><polygon points="538,505 621,505 621,597 530,690 506,694 506,540" fill="#1DA1F2" stroke="#1DA1F2" stroke-width="7" stroke-linejoin="round"/></svg></div><h2 class="text-xl lg:text-2xl font-black text-white">Tishk Renewable Energy</h2></div>
+          <p class="text-xs text-slate-400">Solar CAD & Renewable Engineering Studio</p>
+          <p class="text-xs text-emerald-400 font-semibold mt-1">پسپۆڕی سیستەمی سۆلاری سەربان، کێڵگە، کەپری ئۆتۆمبێل و هایبرید لە کوردستان و عێراق</p>
+        </div>
+        <div class="text-left text-xs space-y-1">
+          <p><span class="text-slate-400">ڕێکەوت:</span> <strong id="propDate">-</strong></p>
+          <p><span class="text-slate-400">ژمارەی گرێبەست:</span> <strong class="text-emerald-400">TRE-SOL-9942</strong></p>
+          <p><span class="text-slate-400">شوێن:</span> <strong>هەرێمی کوردستان - عێراق</strong></p>
+        </div>
+      </div>
+
+      <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+        <div><span class="text-slate-400 block">بەڕێز:</span><input type="text" value="کڕیاری بەڕێز" class="bg-transparent border-b border-slate-700 font-bold text-white focus:outline-none w-full"></div>
+        <div><span class="text-slate-400 block">ژمارەی پەیوەندی:</span><input type="text" value="0750 000 0000" class="bg-transparent border-b border-slate-700 font-bold text-white focus:outline-none w-full"></div>
+        <div><span class="text-slate-400 block">جۆری سیستەم:</span><strong id="propSystemType" class="text-emerald-400">-</strong></div>
+        <div><span class="text-slate-400 block">توانای پڕۆژە:</span><strong id="propKwpCapacity" class="text-amber-400">-</strong></div>
+      </div>
+
+      <div>
+        </div>
+      <div id="dash" class="space-y-3"></div>
+      <div>
+        <h3 class="font-bold text-base text-white mb-2 flex items-center gap-2"><i class="fa-solid fa-list-check text-emerald-400"></i><span>خشتەی کەرەستە و پێکهاتەی ئەندازیاری (BOM)</span></h3>
+        <div class="border border-slate-800 rounded-xl overflow-x-auto">
+          <table class="w-full text-right text-xs">
+            <thead class="bg-slate-950 text-slate-300 border-b border-slate-800">
+              <tr><th class="p-2.5">کەرەستە / ماددە</th><th class="p-2.5">براند و مۆدێل</th><th class="p-2.5">عەدەد</th><th class="p-2.5">گرەنتی و کوالێتی</th></tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/80 bg-slate-900/50">
+              <tr><td class="p-2.5 font-bold text-white">لوحەی سۆلار (PV Modules)</td><td class="p-2.5" id="propPanelModel">-</td><td class="p-2.5 font-bold text-amber-400" id="propPanelCount">-</td><td class="p-2.5 text-emerald-400">12 ساڵ بەرهەم / 30 ساڵ توانست</td></tr>
+              <tr><td class="p-2.5 font-bold text-white">ئینڤێرتەری زیرەک (Inverter)</td><td class="p-2.5" id="propInverterModel">-</td><td class="p-2.5 font-bold text-emerald-400">1 دانە</td><td class="p-2.5 text-emerald-400">5 ساڵ گرەنتی کۆمپانیا</td></tr>
+              <tr><td class="p-2.5 font-bold text-white">بانکی پاتری (Battery)</td><td class="p-2.5" id="propBatteryModel">-</td><td class="p-2.5 font-bold text-blue-400" id="propBatteryCount">-</td><td class="p-2.5 text-emerald-400">10 ساڵ (6000 خول)</td></tr>
+              <tr><td class="p-2.5 font-bold text-white">ستراکچەری ڕاگر (Mounting)</td><td class="p-2.5" id="propStructureModel">-</td><td class="p-2.5 font-bold">1 سێت تەواو</td><td class="p-2.5 text-emerald-400">15 ساڵ دژە ژەنگ</td></tr>
+              <tr><td class="p-2.5 font-bold text-white">پاراستن و تەل و کەیبڵ (BOS)</td><td class="p-2.5">DC/AC کەیبڵی تایبەتی سۆلار، بریکەر و SPD و ئەرس</td><td class="p-2.5 font-bold">پێداویستی تەواو</td><td class="p-2.5 text-emerald-400">ستانداردی IEC</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs space-y-2">
+          <h4 class="font-bold text-slate-200 border-b border-slate-800 pb-1">پوختەی دارایی و پاشەکەوت</h4>
+          <div class="row"><span class="text-slate-400">مەسرەفی پێشبینیکراوی مانگانە:</span><span id="propMonthlyKwh" class="font-bold text-white">-</span></div>
+          <div class="row"><span class="text-slate-400">مەسرەف پێش سۆلار:</span><span id="propPreBill" class="font-bold text-rose-400">-</span></div>
+          <div class="row"><span class="text-slate-400">مەسرەفی نوێ دوای سۆلار:</span><span id="propPostBill" class="font-bold text-emerald-400">-</span></div>
+          <div class="row pt-1 border-t border-slate-800"><span class="font-bold text-white">پاشەکەوتی مانگانە:</span><span id="propMonthlySave" class="font-black text-emerald-400 text-sm">-</span></div>
+          <div class="row"><span class="text-slate-400">پاشەکەوتی ساڵانە:</span><span id="propYearlySave" class="font-bold text-amber-400">-</span></div>
+        </div>
+        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs space-y-2">
+          <h4 class="font-bold text-slate-200 border-b border-slate-800 pb-1">کاریگەری ژینگەیی (25 ساڵ، لەگەڵ Degradation)</h4>
+          <div class="row"><span class="text-slate-400">کۆی بەرهەمی ٢٥ ساڵە:</span><span id="prop25yrKwh" class="font-bold text-emerald-400">-</span></div>
+          <div class="row"><span class="text-slate-400">ڕێگریکردن لە گازی CO₂:</span><span id="prop25yrCo2" class="font-bold text-teal-400">-</span></div>
+          <div class="row"><span class="text-slate-400">بەرامبەر بە چاندنی درەخت:</span><span id="prop25yrTrees" class="font-bold text-emerald-500">-</span></div>
+          <div class="p-2 bg-emerald-950/30 rounded border border-emerald-500/20 text-[11px] text-emerald-300"><i class="fa-solid fa-leaf ml-1"></i> ئەم سیستەمە خێزانەکەت یان کۆمپانیاکەت دەکاتە دۆستێکی ڕاستەقینەی ژینگەی کوردستان.</div>
+        </div>
+      </div>
+
+      <div class="pt-6 border-t border-slate-800 grid grid-cols-2 text-center text-xs">
+        <div><p class="font-bold text-slate-300 mb-8">ئەندازیاری پسپۆڕ و دیزاینەر</p><p class="font-black text-emerald-400">Tishk Renewable Energy</p><p class="text-[10px] text-slate-500">مۆری فەرمی ستۆدیۆ / واژۆ</p></div>
+        <div><p class="font-bold text-slate-300 mb-8">ڕەزامەندی خاوەن ماڵ / کڕیار</p><p class="font-black text-slate-300">ناوی بەڕێزتان</p><p class="text-[10px] text-slate-500">واژۆ و پەسەندکردن</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------- STATE ---------- */
+const state = {
+  structureType: 'carport', rows: 2, cols: 10, tilt: 18, azimuth: 180, frontHeight: 2.3, material: 'alu',
+  panelWatt: 585, panelEff: 22.6, panelName: 'Longi Hi-MO 7 Bifacial Dual-Glass 585W (N-Type TOPCon)',
+  panelLength: 2.278, panelWidth: 1.134,
+  inverterName: 'Deye 12kW Three-Phase Hybrid (SUN-12K-SG04LP3)', inverterPowerKw: 12,
+  systemTopology: 'hybrid', phase: '3phase',
+  batteryName: 'Dyness Powerbox Pro LiFePO4 10.24 kWh', batteryQty: 2, batteryUnitKwh: 10.24,
+  monthlyKwhUse: 1600, generatorCost: 150000
+};
+
+const structureNames = {
+  sandwich: 'ساندوێچ پەنەڵ (Sandwich Panel Clamps)', ground: 'ساحەی کراوە / زەمینی (Open Ground Mount)',
+  carport: 'کەپری ئۆتۆمبێل (Carport Parking Canopy)', aframe: 'ستراکچەری ئاسایی ستاندارد (A-Frame Flat Roof)',
+  pergola: 'پێرگۆلای تەلارسازی (Architectural Pergola)', minirail: 'مینی ڕەیڵ هێڵی (Mini-Rail Clamps)',
+  monopole: 'تاک ستوونی قورس (Heavy-Duty Monopole)', ballasted: 'بەلاستی کۆنکرێتی (Ballasted Flat Roof)',
+  facade: 'فەساد و دیواری بینا (BIPV Wall Facade)', multitier: 'فرە ئاستی بەرزکراوە (Multi-Tier Roof Racks)'
+};
+
+/* FIX 4/5: per-model data */
+const MONO = 'تاک ڕوو (Monofacial)', BIFI = 'دوو ڕوو (Bifacial +15%)';
+
+/* ---------- UI HELPERS ---------- */
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  const c = document.getElementById('tabContent-' + tabId), b = document.getElementById('tabBtn-' + tabId);
+  if (c) c.classList.remove('hidden');
+  if (b) b.classList.add('active');
+}
+function setText(id, v) { const el = document.getElementById(id); if (el) el.innerText = v; }
+// reads a number; keeps 0 as valid (FIX 2)
+function readNum(id, fallback, isFloat) {
+  const v = isFloat ? parseFloat(document.getElementById(id).value) : parseInt(document.getElementById(id).value);
+  return isNaN(v) ? fallback : v;
+}
+function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
+
+/* ---------- CALCULATIONS ---------- */
+const STRUCT_X={carport:1.35,ground:0.9,sandwich:0.85,minirail:0.85,aframe:1,pergola:1.4,monopole:1.3,ballasted:1,facade:1.5,multitier:1.2}, MAT_X={alu:1,hdg:0.9,magnesium:1.05};
+function pvCost(kwp){const x=(STRUCT_X[state.structureType]||1)*(MAT_X[(document.getElementById('rackMaterial')||{}).value]||1);return kwp*N('priceKwp',500)*(1+0.35*(x-1));}
+function buildCF(cost,ms,bat){
+  const d1=N('degY1',1)/100,d2=N('degYr',0.4)/100,g=N('tariffEsc',0)/100,om=cost*N('omPct',1)/100,rp=N('replPct',70)/100,fx=N('fx',1320),yI=Math.round(N('invRepl',12)),yB=Math.round(N('batRepl',12));
+  const cf=[-cost]; let extra=om*25;
+  for(let y=1;y<=25;y++){let v=ms*12*Math.max(0,1-d1-(y-1)*d2)*Math.pow(1+g,y-1)-om;
+    if(y===yI){const c=state.inverterPowerKw*N('priceInv',120)*fx*rp;v-=c;extra+=c;}
+    if(y===yB&&bat>0){const c=bat*N('priceBat',260)*fx*rp;v-=c;extra+=c;}
+    cf.push(v);}
+  cf.extra=extra; return cf;
+}
+function paybackOf(cf){let c=cf[0];for(let y=1;y<cf.length;y++){const n=c+cf[y];if(n>=0)return y-1+(-c)/cf[y];c=n;}return null;}
+function schedule3D(){clearTimeout(window._t3);window._t3=setTimeout(build3DStructure,120);}
+function updateSystemCalculations() {
+  state.rows = clamp(readNum('structRows', 2), 1, 10);
+  state.cols = clamp(readNum('structCols', 10), 1, 30);
+  state.tilt = clamp(readNum('structTilt', 18), 0, 90);          // FIX 2: 0 allowed
+  state.azimuth = readNum('structAzimuth', 180);
+  state.frontHeight = clamp(readNum('frontHeight', 2.3, true), 0.1, 5);
+  state.panelWatt = Math.max(1, readNum('panelWatt', 585));
+  state.systemTopology = document.getElementById('systemTopology').value;
+  state.phase = document.getElementById('inverterPhase').value;
+  state.batteryQty = clamp(readNum('batteryQty', 2), 1, 10);
+  state.monthlyKwhUse = Math.max(0, readNum('monthlyKwhUse', 1600, true));
+  state.generatorCost = Math.max(0, readNum('generatorCost', 150000, true));
+
+  const totalPanels = state.rows * state.cols;
+  const totalKwp = (totalPanels * state.panelWatt) / 1000;
+  const totalBatteryKwh = state.systemTopology === 'ongrid' ? 0 : state.batteryQty * state.batteryUnitKwh;
+  const totalArea = (totalPanels * state.panelLength * state.panelWidth * 1.15).toFixed(1);
+
+  syncClimate();
+  const PR = clamp(N('prInput', 83), 30, 100) / 100;
+  const [dailySummer, dailySpring, dailyAutumn, dailyWinter] = [N('psh1', 6.5), N('psh2', 5.2), N('psh3', 4.5), N('psh4', 3)].map(h => totalKwp * h * PR);
+  const annualKwh = Math.round(monthlyPSH().reduce((a, h, i) => a + totalKwp * PR * h * MDAY[i], 0));
+  const monthlyAvgKwh = Math.round(annualKwh / 12);
+
+  const annualCo2Tons = (annualKwh * 0.55 / 1000);
+  const annualTrees = Math.round((annualKwh * 0.55) / 21.7);
+
+  // FIX 7: degradation: 1% first year, then 0.4%/year -> 23.55x first-year output over 25 years
+  const kwh25 = Math.round(annualKwh * (25 * (1 - N('degY1', 1) / 100) - N('degYr', 0.4) / 100 * 300));
+  const co2_25 = kwh25 * 0.55 / 1000;
+  const trees25 = Math.round(kwh25 * 0.55 / 21.7);
+
+  const preSolarTotal = Math.round(calcRwnakiBill(state.monthlyKwhUse) + state.generatorCost);
+  state.dod = /Lead|Gel/i.test(state.batteryName) ? 0.5 : 0.9;
+  setText('dodTxt', state.dod === 0.5 ? '50%' : '90% - 95%'); setText('cycTxt', state.dod === 0.5 ? '500 - 1,200 خول' : '6,000+ خول');
+  const usableBat = totalBatteryKwh * state.dod * 0.95, nightE = Math.max(0.1, N('nightKw', 2) * N('autonomyH', 8));
+  const selfHybEff = N('selfOn', 60) + (N('selfHyb', 90) - N('selfOn', 60)) * Math.min(1, usableBat / nightE);
+  let postSolarHybrid = Math.round(calcRwnakiBill(Math.max(0, state.monthlyKwhUse - monthlyAvgKwh * selfHybEff / 100)));
+  if (state.systemTopology === 'offgrid') postSolarHybrid = Math.round(state.generatorCost * clamp(1 - monthlyAvgKwh * selfHybEff / 100 / Math.max(1, state.monthlyKwhUse), 0, 1));
+  const postSolarOngrid = Math.round(calcRwnakiBill(Math.max(0, state.monthlyKwhUse - monthlyAvgKwh * N('selfOn', 60) / 100)) + state.generatorCost * 0.35);
+  const postBill = state.systemTopology === 'ongrid' ? postSolarOngrid : postSolarHybrid;
+  const monthlySavings = preSolarTotal - postBill;
+
+  const costUsd = (pvCost(totalKwp) + totalBatteryKwh * N('priceBat', 260) + state.inverterPowerKw * N('priceInv', 120)) * (1 + N('bosPct', 10) / 100);
+  const approxCostIqd = costUsd * N('fx', 1320);
+  const cf = buildCF(approxCostIqd, monthlySavings, totalBatteryKwh), pb0 = paybackOf(cf);
+  window._cost = { cf, pb: pb0, costUsd, approxCostIqd, PR, annualKwh, totalKwp, monthlyAvgKwh, preSolarTotal, postSolarHybrid, postSolarOngrid, monthlySavings, kwh25, co2_25, trees25, annualCo2Tons, annualTrees, totalBatteryKwh, totalPanels };
+  const roiYears = pb0 === null ? '-' : pb0.toFixed(1);
+
+  const acKw = Math.min(totalKwp, state.inverterPowerKw), phaseAmp = ((acKw * 1000) / (state.phase === '3phase' ? 1.732 * 380 * 0.95 : 220 * 0.95)).toFixed(1), oneP = state.phase === '1phase';
+
+  // Header & dashboard
+  setText('headerTotalKwp', `${totalKwp.toFixed(2)} kWp`);
+  setText('headerAnnualKwh', `${annualKwh.toLocaleString()} kWh`);
+  setText('structTotalPanels', `${totalPanels} لوح`);
+  setText('structAreaNeeded', `${totalArea} مەتر دووجا (m²)`);
+  setText('dashTotalKwp', totalKwp.toFixed(2));
+  setText('dashMonthlyKwh', monthlyAvgKwh.toLocaleString());
+  setText('dashCo2Tons', annualCo2Tons.toFixed(1));
+  setText('dashTreesCount', annualTrees.toLocaleString());
+  setText('seasonSummer', `${dailySummer.toFixed(1)} kWh`);
+  setText('seasonSpring', `${dailySpring.toFixed(1)} kWh`);
+  setText('seasonAutumn', `${dailyAutumn.toFixed(1)} kWh`);
+  setText('seasonWinter', `${dailyWinter.toFixed(1)} kWh`);
+
+  // Battery
+  setText('totalBatteryKwh', `${totalBatteryKwh.toFixed(2)} kWh`);
+  setText('backupHours', totalBatteryKwh > 0 ? `نزیکەی ${(totalBatteryKwh * state.dod * 0.95 / Math.max(0.1, N('nightKw', 2))).toFixed(1)} کاتژمێر (بارگرانی ${N('nightKw', 2)}kW)` : 'بێ پاتری');
+
+  // Inverter
+  setText('phaseL1', `${phaseAmp} A`); setText('phaseL2', oneP ? '—' : `${phaseAmp} A`); setText('phaseL3', oneP ? '—' : `${phaseAmp} A`);
+  setText('invPowerLabel', `${state.inverterPowerKw} kW`);
+  const ratio = totalKwp / state.inverterPowerKw;
+  const ratioEl = document.getElementById('dcAcRatio');
+  ratioEl.innerText = `DC/AC = ${ratio.toFixed(2)} ` + (ratio > 1.5 ? '⚠ زۆر بەرزە، ئینڤێرتەرێکی گەورەتر بەکاربێنە'
+    : ratio < 0.9 ? '⚠ ئینڤێرتەر زۆر گەورەیە' : '✓ گونجاوە');
+  ratioEl.className = 'font-bold mt-1.5 ' + ((ratio > 1.5 || ratio < 0.9) ? 'text-amber-400' : 'text-teal-400');
+  if (/On-Grid/i.test(state.inverterName) && state.systemTopology !== 'ongrid') { ratioEl.innerText += ' | ⚠ ئینڤێرتەری On-Grid پاتری پشتگیری ناکات'; ratioEl.className = 'font-bold mt-1.5 text-amber-400'; }
+
+  // Finance
+  setText('billPreSolar', `${preSolarTotal.toLocaleString()} دینار`);
+  setText('billPostHybrid', `${postSolarHybrid.toLocaleString()} دینار`);
+  setText('billPostOngrid', `${postSolarOngrid.toLocaleString()} دینار`);
+  setText('monthlySavings', `${monthlySavings.toLocaleString()} دینار`);
+  setText('roiYears', roiYears === '-' ? '-' : `نزیکەی ${roiYears} ساڵ`);
+
+  // Proposal
+  const topo = state.systemTopology === 'hybrid' ? 'هایبرید ' : state.systemTopology === 'ongrid' ? 'ئۆن-گرید ' : 'ئۆف-گرید ';
+  setText('propSystemType', topo + (state.phase === '3phase' ? '(سێ فەیز 380V)' : '(سینگڵ فەیز 220V)'));
+  setText('propKwpCapacity', `${totalKwp.toFixed(2)} kWp DC`);
+  setText('propPanelCount', `${totalPanels} لوح`);
+  setText('propPanelModel', state.panelName);
+  setText('propInverterModel', state.inverterName);
+  setText('propBatteryModel', totalBatteryKwh > 0 ? `${state.batteryName} (${totalBatteryKwh.toFixed(1)} kWh)` : '-');
+  setText('propBatteryCount', state.systemTopology === 'ongrid' ? 'بێ پاتری (On-Grid)' : `${state.batteryQty} دانە`);
+  setText('propStructureModel', structureNames[state.structureType]);
+  setText('propMonthlyKwh', `${state.monthlyKwhUse.toLocaleString()} kWh`);
+  setText('propPreBill', `${preSolarTotal.toLocaleString()} دینار`);
+  setText('propPostBill', `${postBill.toLocaleString()} دینار`);
+  setText('propMonthlySave', `${monthlySavings.toLocaleString()} دینار`);
+  setText('propYearlySave', `${(monthlySavings * 12).toLocaleString()} دینار`);
+  setText('prop25yrKwh', `${kwh25.toLocaleString()} kWh`);
+  setText('prop25yrCo2', `${co2_25.toFixed(1)} تەن`);
+  setText('prop25yrTrees', `${trees25.toLocaleString()} درەخت`);
+
+  // Compass label
+  const azNames = { 180: 'باشوور', 160: 'باشووری ڕۆژهەڵات', 200: 'باشووری ڕۆژئاوا', 90: 'ڕۆژهەڵات', 270: 'ڕۆژئاوا' };
+  setText('compassLabel', `${azNames[state.azimuth] || ''} (${state.azimuth}°)`);
+
+  schedule3D();
+  extraUI();
+  renderReport();
+  renderCalc();
+  renderFin();
+  renderClimate();
+  redrawRoof();
+}
+
+/* ---------- EVENTS ---------- */
+function onStructureChange() {
+  state.structureType = document.getElementById('structureType').value;
+  const label = structureNames[state.structureType] || 'ستراکچەر';
+  setText('view3dStructureLabel', label.split(' (')[0]);
+  const defaults = { carport: [2.4, 10], sandwich: [0.2, 12], ground: [0.8, 25], facade: [1.0, 85] };
+  const d = defaults[state.structureType] || [1.2, 18];
+  document.getElementById('frontHeight').value = d[0];
+  document.getElementById('structTilt').value = d[1];
+  setText('tiltVal', d[1] + '°');
+  updateSystemCalculations();
+}
+
+/* ===== v2: catalog, settings, roof ===== */
+const $ = id => document.getElementById(id);
+const N = (id, d) => { const e = $(id); const v = e ? parseFloat(e.value) : NaN; return isNaN(v) ? d : v; };
+const CAT = {
+  panel: {
+    'Longi': { 'Hi-MO 7 N-Type TOPCon Bifacial': { s: [575, 580, 585, 590], d: [2278, 1134, 30], bi: BIFI }, 'Hi-MO X6 Max HPBC': { s: [580, 590, 600], d: [2172, 1303, 33], bi: MONO }, 'Hi-MO 9 BC': { s: [620, 630, 640], d: [2382, 1134, 30], bi: MONO } },
+    'Jinko': { 'Tiger Neo N-Type 72HL4-BDV': { s: [610, 620, 630], d: [2382, 1134, 30], bi: BIFI } },
+    'Trina': { 'Vertex N NEG21C.20': { s: [670, 690, 700], d: [2384, 1303, 33], bi: BIFI } },
+    'Canadian Solar': { 'TOPHiKu7 / BiHiKu7 N-Type': { s: [650, 660, 670], d: [2384, 1303, 35], bi: BIFI } },
+    'JA Solar': { 'DeepBlue 4.0 Pro MBB': { s: [590, 600, 610], d: [2279, 1134, 35], bi: MONO } }
+  },
+  inverter: {
+    'Deye': { 'SUN-xK-SG04LP3 Hybrid 3-Phase': { s: [5, 6, 8, 10, 12, 15, 20], ph: '3phase' }, 'SUN-xK-SG03LP1 Hybrid 1-Phase': { s: [3.6, 5, 6, 8], ph: '1phase' } },
+    'Huawei': { 'SUN2000-KTL-M1 Hybrid': { s: [5, 6, 8, 10], ph: '3phase' } },
+    'Growatt': { 'SPH TL3 BH-UP Storage': { s: [5, 6, 8, 10], ph: '3phase' } },
+    'Sungrow': { 'SH RT Hybrid': { s: [5, 6, 8, 10], ph: '3phase' } },
+    'SMA': { 'Sunny Tripower Smart Energy': { s: [5, 6, 8, 10], ph: '3phase' } },
+    'Solis': { 'S6-EH3P Hybrid': { s: [5, 6, 8, 10], ph: '3phase' } },
+    'Victron': { 'Quattro-II 48V': { s: [5, 10], ph: '1phase' } },
+    'GoodWe': { 'ET Series Hybrid': { s: [5, 8, 10], ph: '3phase' } },
+    'Fronius': { 'Symo GEN24 Plus': { s: [5, 6, 8, 10], ph: '3phase' } },
+    'Sofar': { 'HYD-3PH Storage': { s: [5, 6, 8, 10, 15, 20], ph: '3phase' } }
+  },
+  battery: {
+    'Dyness': { 'Powerbox Pro LiFePO4': { s: [5.12, 10.24, 14.34] } },
+    'Pylontech': { 'US5000': { s: [4.8] }, 'US3000C': { s: [3.55] } },
+    'Deye': { 'SE-G5.1 Pro': { s: [5.12] } },
+    'BYD': { 'Battery-Box Premium HVS': { s: [5.1, 7.7, 10.2, 12.8] } },
+    'Huawei': { 'LUNA2000 Smart String': { s: [5, 10, 15] } },
+    'Felicity': { 'Wall Mounted LiFePO4 48V': { s: [5.12, 10.24, 15] } },
+    'Growatt': { 'ARK 2.5L-A1': { s: [2.56, 5.12, 7.68, 10.24] } },
+    'Sungrow': { 'SBR High-Voltage': { s: [9.6, 12.8, 16, 19.2] } },
+    'Tesla': { 'Powerwall 2 / 3': { s: [13.5] } },
+    'Freedomwon': { 'Lite Home LiFePO4': { s: [5, 10, 15] } }
+  }
+};
+/* ---- extra models (dimensions/sizes are approximate: verify with datasheet) ---- */
+const mkP = (s, d, bi) => ({ s, d, bi }), mkI = (s, ph) => ({ s, ph }), mkB = s => ({ s });
+const addM = (t, b, m) => { CAT[t][b] = Object.assign(CAT[t][b] || {}, m); };
+const CUS = 'دەستی (Custom)';
+addM('panel', 'Longi', {
+  'Hi-MO X10 HPBC 2.0 (66-cell)': mkP([600, 610, 620, 630, 640, 650], [2382, 1134, 30], MONO),
+  'Hi-MO X10 Guardian (54-cell)': mkP([435, 440, 445, 450, 455, 460], [1722, 1134, 30], MONO),
+  'Hi-MO 6 N-Type (54-cell)': mkP([425, 430, 435, 440], [1722, 1134, 30], MONO),
+  'Hi-MO 5m PERC (72-cell)': mkP([540, 545, 550, 555], [2256, 1133, 35], MONO)
+});
+addM('panel', 'Jinko', {
+  'Tiger Neo 3.0 78HL4-BDV': mkP([620, 630, 640], [2465, 1134, 30], BIFI),
+  'Tiger Neo 54HL4-V': mkP([430, 435, 440, 445], [1762, 1134, 30], MONO),
+  'Tiger Pro 72HC': mkP([535, 540, 545, 550, 555], [2274, 1134, 35], MONO)
+});
+addM('panel', 'Trina', {
+  'Vertex N NEG19R.20 (72-cell)': mkP([570, 575, 580, 585], [2384, 1134, 30], BIFI),
+  'Vertex S+ NEG9R.28': mkP([425, 430, 435, 440, 445], [1762, 1134, 30], BIFI),
+  'Vertex S TSM-DE09R': mkP([400, 405, 410, 415], [1722, 1134, 30], MONO)
+});
+addM('panel', 'Canadian Solar', {
+  'TOPBiHiKu6 CS6W-TB-AG': mkP([570, 575, 580], [2278, 1134, 35], BIFI),
+  'HiKu6 CS6W-MS PERC': mkP([540, 545, 550, 555], [2261, 1134, 35], MONO)
+});
+addM('panel', 'JA Solar', {
+  'DeepBlue 3.0 JAM72D40': mkP([570, 575, 580, 585], [2278, 1134, 35], BIFI),
+  'DeepBlue 4.0 X JAM72D42': mkP([595, 600, 605, 610, 615], [2278, 1134, 35], BIFI),
+  'JAM72S30 MR PERC': mkP([535, 540, 545, 550, 555], [2274, 1134, 35], MONO)
+});
+addM('panel', 'Astronergy', { 'ASTRO N7 Bifacial': mkP([570, 575, 580, 585], [2278, 1134, 30], BIFI) });
+addM('panel', 'Risen', { 'Hyper-ion N-Type Bifacial': mkP([650, 655, 660, 665, 670], [2384, 1303, 33], BIFI) });
+addM('panel', 'Tongwei', { 'TWMND-72HD N-Type Bifacial': mkP([570, 575, 580, 585, 590], [2278, 1134, 30], BIFI) });
+addM('panel', CUS, { 'مۆدێلی دەستی (وات لە خانەکە بگۆڕە)': mkP([400, 450, 500, 550, 600, 650, 700], [2278, 1134, 30], CUS) });
+
+addM('inverter', 'Deye', {
+  'SUN-xK-G On-Grid 3-Phase': mkI([5, 6, 8, 10, 12, 15, 20, 25, 30, 40, 50], '3phase'),
+  'SUN-xK-SG01LP1 Hybrid 1-Phase LV': mkI([3, 5, 6, 8], '1phase'),
+  'SUN-xK-SG01HP3 HV Hybrid 3-Phase': mkI([5, 6, 8, 10, 12, 15, 20, 25, 30, 40, 50], '3phase')
+});
+addM('inverter', 'Huawei', {
+  'SUN2000-L1 1-Phase': mkI([2, 3, 3.68, 4, 4.6, 5, 6], '1phase'),
+  'SUN2000-KTL-M1 On-Grid': mkI([3, 4, 5, 6, 8, 10], '3phase'),
+  'SUN2000-KTL-M2 On-Grid': mkI([12, 15, 17, 20, 25, 30], '3phase')
+});
+addM('inverter', 'Growatt', {
+  'MIN TL-XH Hybrid 1-Phase': mkI([3, 3.6, 4.2, 4.6, 5, 6], '1phase'),
+  'SPH Hybrid 1-Phase': mkI([3, 4, 5, 6], '1phase'),
+  'MOD TL3-XH Hybrid 3-Phase': mkI([3, 4, 5, 6, 8, 10, 12, 15], '3phase'),
+  'MID TL3-X On-Grid': mkI([15, 17, 20, 25, 30, 33, 36, 40, 50], '3phase')
+});
+addM('inverter', 'Sungrow', {
+  'SH RS Hybrid 1-Phase': mkI([3, 3.6, 4.6, 5, 6], '1phase'),
+  'SG RT On-Grid 3-Phase': mkI([5, 6, 8, 10, 12, 15, 17, 20], '3phase'),
+  'SG CX On-Grid': mkI([30, 33, 36, 40, 50, 75, 110], '3phase')
+});
+addM('inverter', 'SMA', {
+  'Sunny Boy 1-Phase': mkI([3, 3.6, 4, 5, 6], '1phase'),
+  'Sunny Tripower X': mkI([12, 15, 20, 25], '3phase'),
+  'Sunny Island (Off-Grid)': mkI([4.6, 6, 8], '1phase')
+});
+addM('inverter', 'Solis', {
+  'S6-EH1P Hybrid 1-Phase': mkI([3, 3.6, 5, 6, 8], '1phase'),
+  'S5-GR3P On-Grid 3-Phase': mkI([5, 6, 8, 10, 15, 20, 25, 30, 40, 50], '3phase'),
+  'S6-GR1P On-Grid 1-Phase': mkI([2.5, 3, 3.6, 4, 5, 6], '1phase')
+});
+addM('inverter', 'Victron', {
+  'MultiPlus-II 48V': mkI([3, 5], '1phase'),
+  'Multi RS Solar 48V': mkI([3, 6], '1phase'),
+  'Quattro 48V': mkI([8, 15], '1phase')
+});
+addM('inverter', 'GoodWe', {
+  'ES Hybrid 1-Phase': mkI([3, 3.6, 5, 6], '1phase'),
+  'DNS On-Grid 1-Phase': mkI([2.5, 3, 3.6, 4.6, 5, 6], '1phase'),
+  'MT On-Grid 3-Phase': mkI([4, 5, 6, 8, 10, 12, 15, 17, 20, 25, 30], '3phase')
+});
+addM('inverter', 'Fronius', {
+  'Primo GEN24 Plus 1-Phase': mkI([3, 3.6, 4, 4.6, 5, 6], '1phase'),
+  'Symo Advanced On-Grid': mkI([10, 12.5, 15, 17.5, 20], '3phase')
+});
+addM('inverter', 'Sofar', {
+  'HYD-ES 1-Phase Hybrid': mkI([3, 3.6, 4.6, 5, 6], '1phase'),
+  'KTLX-G3 On-Grid 3-Phase': mkI([3, 5, 6, 8, 10, 12, 15, 20, 25, 30, 40, 50], '3phase')
+});
+addM('inverter', 'Voltronic (Axpert / Infini)', {
+  'Axpert King Off-Grid 1-Phase': mkI([3, 5], '1phase'),
+  'Axpert MKS Off-Grid 1-Phase': mkI([3, 5], '1phase'),
+  'Infini Plus Hybrid': mkI([5, 10], '1phase'),
+  'Infini 3-Phase Hybrid': mkI([10], '3phase')
+});
+addM('inverter', 'Must', { 'PV1800 Off-Grid': mkI([1, 2, 3, 3.5, 5, 5.5, 6], '1phase') });
+addM('inverter', 'Afore', {
+  'BNT Hybrid 1-Phase': mkI([3, 3.6, 5, 6], '1phase'),
+  'HNT Hybrid 3-Phase': mkI([5, 6, 8, 10], '3phase')
+});
+addM('inverter', 'Invt', { 'XD Hybrid 3-Phase': mkI([5, 6, 8, 10, 12, 15, 20], '3phase') });
+addM('inverter', CUS, { 'مۆدێلی دەستی': mkI([3, 5, 6, 8, 10, 12, 15, 20, 25, 30, 40, 50, 60, 80, 100]) });
+
+addM('battery', 'Dyness', {
+  'B4850 LiFePO4 48V': mkB([2.4]),
+  'DL5.0C LiFePO4 48V': mkB([4.8])
+});
+addM('battery', 'Pylontech', {
+  'US2000C': mkB([2.4]),
+  'Force L2': mkB([7.1]),
+  'Force H2 High-Voltage': mkB([7.1, 10.65, 14.2, 17.75, 21.3])
+});
+addM('battery', 'Deye', {
+  'RW-M6.1 LV': mkB([6.14]),
+  'RW-F10.2 LV': mkB([10.24]),
+  'BOS-GM5.1': mkB([5.12])
+});
+addM('battery', 'BYD', {
+  'Battery-Box LVS': mkB([4, 8, 12, 16, 20, 24]),
+  'Battery-Box HVM': mkB([8.3, 11.04, 13.8, 16.6, 19.3, 22.1])
+});
+addM('battery', 'Growatt', { 'APX High-Voltage': mkB([5, 7.5, 10, 12.5, 15, 17.5, 20, 22.5, 25, 27.5, 30]) });
+addM('battery', 'Pytes', { 'E-BOX 48100R': mkB([5.12]), 'V5': mkB([5.12]) });
+addM('battery', 'Lead-Acid / Gel (DoD 50%)', { 'Gel 12V 100Ah': mkB([1.2]), 'Gel 12V 200Ah': mkB([2.4]) });
+addM('battery', CUS, { 'مۆدێلی دەستی': mkB([2.5, 5, 7.5, 10, 12.5, 15, 20, 25, 30]) });
+
+const opts = a => a.map(x => `<option value="${x}">${x}</option>`).join('');
+function cascade(type, ids, unit) {
+  const cat = CAT[type], b = $(ids[0]), m = $(ids[1]), s = $(ids[2]);
+  if (!b.options.length) b.innerHTML = opts(Object.keys(cat));
+  if (m.dataset.b !== b.value) { m.innerHTML = opts(Object.keys(cat[b.value])); m.dataset.b = b.value; s.dataset.m = ''; }
+  if (s.dataset.m !== m.value) { s.innerHTML = cat[b.value][m.value].s.map(x => `<option value="${x}">${x} ${unit}</option>`).join(''); s.dataset.m = m.value; }
+  return { b: b.value, m: m.value, d: cat[b.value][m.value], size: parseFloat(s.value) };
+}
+function onPanelChange() {
+  const r = cascade('panel', ['panelBrand', 'panelPreset', 'panelSize'], 'W');
+  state.panelName = `${r.b} ${r.m} ${r.size}W`; state.panelWatt = r.size;
+  state.panelLength = r.d.d[0] / 1000; state.panelWidth = r.d.d[1] / 1000;
+  $('panelWatt').value = r.size;
+  const _c = Math.round(r.d.d[0] / 31.75), _v = _c * 0.72; if ($('vocP')) { $('vocP').value = _v.toFixed(1); $('iscP').value = (r.size / (0.84 * _v * 0.94)).toFixed(1); }
+  setText('panelDims', r.d.d.join(' × ') + ' mm'); setText('panelBifacial', r.d.bi);
+  updateSystemCalculations();
+}
+function onInverterChange() {
+  const r = cascade('inverter', ['invBrand', 'inverterBrand', 'invSize'], 'kW');
+  state.inverterName = `${r.b} ${r.m} ${r.size}kW`; state.inverterPowerKw = r.size;
+  if (r.d.ph) $('inverterPhase').value = r.d.ph;
+  updateSystemCalculations();
+}
+function onBatteryChange() {
+  const r = cascade('battery', ['batBrand', 'batteryBrand', 'batSize'], 'kWh');
+  state.batteryName = `${r.b} ${r.m}`; state.batteryUnitKwh = r.size;
+  updateSystemCalculations();
+}
+function calcRwnakiBill(kwh) {
+  const p = [N('tar1', 72), N('tar2', 115), N('tar3', 160), N('tar4', 250)], lim = [300, 600, 1000];
+  let bill = 0, prev = 0;
+  for (let i = 0; i < 3; i++) { bill += Math.max(0, Math.min(kwh, lim[i]) - prev) * p[i]; prev = lim[i]; }
+  return bill + Math.max(0, kwh - 1000) * p[3];
+}
+function autoPR() {
+  const pr = ['lossTemp', 'lossDust', 'lossCable', 'lossInv', 'lossMis', 'lossShade'].reduce((p, id) => p * (1 - N(id, 0) / 100), 1);
+  $('prInput').value = (pr * 100).toFixed(1);
+  updateSystemCalculations();
+}
+function buildSettings() {
+  const U = 'updateSystemCalculations()';
+  const G = [
+    ['☀️ کاتژمێری تیشکی خۆر لە ڕۆژێکدا', [['psh1', 'هاوین', 6.5], ['psh2', 'بەهار', 5.2], ['psh3', 'پاییز', 4.5], ['psh4', 'زستان', 3]], U],
+    ['📉 زیانەکان (PR ئۆتۆماتیک دەژمێردرێت)', [['lossTemp', 'گەرما %', 8], ['lossDust', 'تۆز %', 3], ['lossCable', 'تەل %', 2], ['lossInv', 'ئینڤێرتەر %', 3], ['lossMis', 'Mismatch %', 2], ['lossShade', 'سێبەر %', 0]], 'autoPR()'],
+    ['⚙️ کولفەی سیستەم (PR %) — دەستکاریش دەکرێت', [['prInput', 'PR %', 83.1]], U],
+    ['💡 تەعریفەی ڕووناکی (دینار/kWh)', [['tar1', '١-٣٠٠', 72], ['tar2', '٣٠١-٦٠٠', 115], ['tar3', '٦٠١-١٠٠٠', 160], ['tar4', '>١٠٠٠', 250]], U],
+    ['💰 نرخەکان', [['priceKwp', 'لوحە+ستراکچەر $/kWp', 500], ['priceInv', 'ئینڤێرتەر $/kW', 120], ['priceBat', 'پاتری $/kWh', 260], ['bosPct', 'کرێ و تێچووی تر %', 10], ['fx', 'نرخی دۆلار (IQD)', 1320]], U],
+    ['🔁 بەکارهێنان و کەمبوونەوە', [['selfHyb', 'خۆبەکارهێنان هایبرید %', 90], ['selfOn', 'خۆبەکارهێنان ئۆن-گرید %', 60], ['degY1', 'کەمبوونەوەی ساڵی ١ %', 1], ['degYr', 'کەمبوونەوەی ساڵانە %', 0.4]], U],
+    ['🛠️ تێچووی ٢٥ ساڵ', [['omPct', 'چاکسازی %/ساڵ', 1], ['invRepl', 'گۆڕینی ئینڤێرتەر (ساڵ)', 12], ['batRepl', 'گۆڕینی پاتری (ساڵ)', 12], ['replPct', 'نرخی گۆڕین %', 70], ['tariffEsc', 'زیادبوونی نرخی کارەبا %/ساڵ', 0]], U]
+  ];
+  $('setGrid').innerHTML = G.map(([t, f, h]) => `<div class="fld text-xs"><div class="font-bold text-slate-200 mb-2">${t}</div><div class="grid grid-cols-2 gap-2">${f.map(([id, l, v]) => `<div><label class="lb">${l}</label><input id="${id}" type="number" step="any" value="${v}" oninput="${h}" class="inp text-white"></div>`).join('')}</div></div>`).join('');
+}
+function extraUI() {
+  const k = window._cost; if (!k) return;
+  setText('panelEff', (state.panelWatt / (state.panelLength * state.panelWidth) / 10).toFixed(1) + '%');
+  setText('sumPR', (k.PR * 100).toFixed(1) + '%');
+  setText('sumYield', Math.round(k.annualKwh / k.totalKwp).toLocaleString() + ' kWh/kWp');
+  setText('sumCost', '$' + Math.round(k.costUsd).toLocaleString() + ' ≈ ' + Math.round(k.approxCostIqd).toLocaleString() + ' IQD');
+}
+function renderReport() {
+  const k = window._cost, host = $('dash'); if (!k || !host) return;
+  const fmt = n => Math.round(n).toLocaleString();
+  const md = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  const ps = monthlyPSH();
+  const col = ['#22d3ee', '#22d3ee', '#34d399', '#34d399', '#34d399', '#fbbf24', '#fbbf24', '#fbbf24', '#fb923c', '#fb923c', '#fb923c', '#22d3ee'];
+  const mon = ps.map((h, i) => k.totalKwp * k.PR * h * md[i]), mx = Math.max(...mon, 1);
+  const bars = mon.map((v, i) => { const h = v / mx * 100, x = 8 + i * 28; return `<rect x="${x}" y="${118 - h}" width="22" height="${h}" rx="4" fill="${col[i]}"/><text x="${x + 11}" y="${114 - h}" font-size="7" text-anchor="middle" fill="#cbd5e1">${Math.round(v)}</text><text x="${x + 11}" y="132" font-size="8" text-anchor="middle" fill="#94a3b8">${i + 1}</text>`; }).join('');
+  const bl = [['پێش سۆلار', k.preSolarTotal, '#fb7185'], ['هایبرید', k.postSolarHybrid, '#34d399'], ['ئۆن-گرید', k.postSolarOngrid, '#60a5fa']];
+  const bm = Math.max(...bl.map(b => b[1]), 1);
+  const bills = bl.map((b, i) => { const w = Math.max(2, b[1] / bm * 230); return `<text x="0" y="${14 + i * 44}" font-size="10" fill="#cbd5e1">${b[0]}</text><rect x="0" y="${20 + i * 44}" width="${w}" height="16" rx="5" fill="${b[2]}"/><text x="${w + 5}" y="${32 + i * 44}" font-size="10" fill="#e2e8f0">${fmt(b[1])}</text>`; }).join('');
+  let _s = 0; const cum = k.cf.map(v => (_s += v)), pb = k.pb; const ys = k.monthlySavings * 12;
+  const lo = Math.min(...cum), hi = Math.max(...cum, 1), X = y => 10 + y / 25 * 340, Y = v => 10 + (hi - v) / ((hi - lo) || 1) * 105;
+  const pts = cum.map((v, y) => `${X(y)},${Y(v)}`).join(' ');
+  const line = `<polygon points="${X(0)},${Y(0)} ${pts} ${X(25)},${Y(0)}" fill="rgba(52,211,153,.18)"/><line x1="10" x2="350" y1="${Y(0)}" y2="${Y(0)}" stroke="#fbbf24" stroke-dasharray="4 3"/><polyline points="${pts}" fill="none" stroke="#34d399" stroke-width="2.5"/>`
+    + (pb !== null ? `<circle cx="${X(pb)}" cy="${Y(0)}" r="5" fill="#f43f5e"/><text x="${X(pb)}" y="${Y(0) - 8}" font-size="9" text-anchor="middle" fill="#fda4af">${pb.toFixed(1)}</text>` : '')
+    + [0, 5, 10, 15, 20, 25].map(y => `<text x="${X(y)}" y="138" font-size="8" text-anchor="middle" fill="#94a3b8">${y}</text>`).join('');
+  const use = Math.max(1, state.monthlyKwhUse), sf = state.systemTopology === 'ongrid' ? N('selfOn', 60) : N('selfHyb', 90);
+  const pct = Math.min(100, k.monthlyAvgKwh * sf / use);
+  const C = 2 * Math.PI * 40;
+  const donut = `<svg viewBox="0 0 120 120" style="direction:ltr" class="w-full max-w-[150px] mx-auto"><circle cx="60" cy="60" r="40" fill="none" stroke="#1e293b" stroke-width="14"/><circle cx="60" cy="60" r="40" fill="none" stroke="#34d399" stroke-width="14" stroke-linecap="round" stroke-dasharray="${pct / 100 * C} ${C}" transform="rotate(-90 60 60)"/><text x="60" y="66" font-size="20" font-weight="bold" text-anchor="middle" fill="#fff">${pct.toFixed(0)}%</text></svg>`;
+  const kp = [['⚡ توانای سیستەم', k.totalKwp.toFixed(2) + ' kWp', 'from-amber-500 to-orange-600'], ['📊 بەرهەمی ساڵانە', fmt(k.annualKwh) + ' kWh', 'from-emerald-500 to-teal-600'], ['💰 پاشەکەوتی مانگانە', fmt(k.monthlySavings) + ' IQD', 'from-sky-500 to-blue-600'], ['📅 پاشەکەوتی ساڵانە', fmt(ys) + ' IQD', 'from-violet-500 to-purple-600'], ['⏳ گەڕانەوەی سەرمایە', (pb === null ? '—' : pb.toFixed(1)) + ' ساڵ', 'from-rose-500 to-pink-600'], ['🏦 قازانجی ٢٥ ساڵ', fmt(cum[25]) + ' IQD', 'from-lime-500 to-green-600']];
+  const card = (t, b, c = '') => `<div class="bg-slate-950 border border-slate-800 rounded-2xl p-3 ${c}"><div class="text-xs font-bold text-slate-200 mb-2">${t}</div>${b}</div>`;
+  const svg = (vb, inner) => `<svg viewBox="${vb}" style="direction:ltr" class="w-full">${inner}</svg>`;
+  const mini = (t, v, c) => `<div class="bg-slate-950 border border-slate-800 rounded-2xl p-3 text-center"><div class="text-[11px] text-slate-400">${t}</div><div class="font-black text-sm ${c}">${v}</div></div>`;
+  host.innerHTML = `<div class="grid grid-cols-2 md:grid-cols-3 gap-3">${kp.map(([t, v, g]) => `<div class="bg-gradient-to-br ${g} rounded-2xl p-3 text-white shadow-lg"><div class="text-[11px] opacity-90">${t}</div><div class="text-base lg:text-lg font-black mt-1">${v}</div></div>`).join('')}</div>`
+    + `<div class="grid md:grid-cols-2 gap-3">${card('📈 بەرهەمی مانگانە (kWh)', svg('0 0 350 140', bars))}${card('🧾 فەتوورەی مانگانە (دینار)', svg('0 0 360 140', bills))}</div>`
+    + `<div class="grid md:grid-cols-3 gap-3">${card('💹 دارایی تەرازووی ٢٥ ساڵ (سوور = گەڕانەوەی سەرمایە)', svg('0 0 360 145', line), 'md:col-span-2')}${card('☀️ ڕێژەی پوشاندنی مەسرەف', donut)}</div>`
+    + `<div class="grid grid-cols-3 gap-3">${mini('تێچووی پڕۆژە', '$' + fmt(k.costUsd), 'text-amber-400')}${mini('CO₂ ٢٥ ساڵ', k.co2_25.toFixed(1) + ' تەن', 'text-teal-400')}${mini('بەرامبەر درەخت', fmt(k.trees25), 'text-emerald-400')}</div>`;
+}
+function buildCalcTab() {
+  const F = [['loadKw', 'بارگرانی لووتکە kW', 6], ['nightKw', 'بارگرانی شەو kW', 2], ['autonomyH', 'پشتگیری شەو (کاتژمێر)', 8], ['cover', 'ئامانجی پوشاندن %', 90], ['vocP', 'Voc ی لوحە (V)', 51.8], ['iscP', 'Isc ی لوحە (A)', 14.4], ['mpptMax', 'MPPT زۆرترین V', 1000], ['mpptMin', 'MPPT کەمترین V', 180], ['mpptN', 'ژمارەی MPPT', 2], ['mpptI', 'MPPT زۆرترین A', 32], ['tMin', 'کەمترین گەرما °C', -10], ['disc', 'Discount Rate %', 8]];
+  const d = document.createElement('div');
+  d.id = 'tabContent-calc'; d.className = 'tab-pane hidden flex flex-col gap-4';
+  d.innerHTML = `<div class="rounded-2xl p-4 bg-gradient-to-br from-fuchsia-600 via-violet-600 to-indigo-600 text-white shadow-lg"><div class="text-sm font-black">🧮 حیسابی تەواوی سیستەم</div><div class="text-[11px] opacity-90">ئەنجامەکان خۆکارانە لەگەڵ هەر گۆڕانکارییەک نوێ دەبنەوە</div></div>
+  <details class="fld text-xs"><summary class="font-bold cursor-pointer text-slate-200">✏️ ئینپوتەکان (دەستکاری بکە)</summary><div class="grid grid-cols-2 gap-2 mt-2">${F.map(([id, l, v]) => `<div><label class="lb">${l}</label><input id="${id}" type="number" step="any" value="${v}" oninput="updateSystemCalculations()" class="inp text-white"></div>`).join('')}</div></details>
+  <div id="calcOut" class="flex flex-col gap-3"></div>`;
+  $('tabContent-rwnaki').parentNode.appendChild(d);
+}
+
+function renderCalc() {
+  const k = window._cost, o = $('calcOut'); if (!k || !o) return;
+  const fmt = n => Math.round(n).toLocaleString(), f1 = (n, d = 1) => Number(n).toFixed(d);
+  const W = state.panelWatt, P = k.totalPanels, kwp = k.totalKwp, use = Math.max(1, state.monthlyKwhUse);
+  const psh = (N('psh1', 6.5) + N('psh2', 5.2) + N('psh3', 4.5) + N('psh4', 3)) / 4;
+  const needKwp = use * N('cover', 90) / 100 / (psh * 30 * k.PR), needP = Math.ceil(needKwp * 1000 / W);
+  const covAct = k.monthlyAvgKwh / use * 100;
+  const area = P * state.panelLength * state.panelWidth * 1.15;
+  // strings
+  const voc = N('vocP', 51.8), isc = N('iscP', 14.4), nM = Math.max(1, N('mpptN', 2));
+  const vocCold = voc * (1 + 0.0025 * (25 - N('tMin', -5)));
+  const sMax = Math.max(1, Math.floor(N('mpptMax', 1000) / vocCold)), sMin = Math.max(1, Math.ceil(N('mpptMin', 180) / (voc * 0.84 * 0.87)));
+  let s = Math.min(sMax, P); for (let t = Math.min(sMax, P); t >= sMin; t--) if (P % t === 0) { s = t; break; }
+  const strs = Math.ceil(P / s), perM = Math.ceil(strs / nM);
+  const okS = s >= sMin && s <= sMax && P % s === 0, okI = perM * isc <= N('mpptI', 32);
+  // inverter / battery
+  const kw = state.inverterPowerKw, ratio = kwp / kw, recKw = Math.max(N('loadKw', 6) * 1.25, kwp / 1.3);
+  const night = Math.max(0.1, N('nightKw', 2)), aut = N('autonomyH', 8), unit = state.batteryUnitKwh;
+  const needBat = night * aut / (state.dod * 0.95), needU = Math.ceil(needBat / unit), bat = k.totalBatteryKwh, hrs = bat * state.dod * 0.95 / night;
+  // protection
+  const three = state.phase === '3phase', iAc = kw * 1000 / (three ? 1.732 * 380 : 220);
+  const brk = [10, 16, 20, 25, 32, 40, 50, 63, 80, 100, 125, 160].find(x => x >= iAc * 1.25) || '>160';
+  const cab = (a, t) => { for (const [m, x] of t) if (a <= x) return m + ' mm²'; return '>' + t[t.length - 1][0] + ' mm²'; };
+  const dcCab = cab(isc * 1.25, [[4, 40], [6, 55], [10, 75]]), acCab = cab(iAc * 1.25, [[4, 25], [6, 32], [10, 45], [16, 60], [25, 80], [35, 100], [50, 125]]);
+  // finance
+  const ys = k.monthlySavings * 12, r = N('disc', 8) / 100, cf = k.cf;
+  const npv = cf.reduce((a, v, y) => a + v / Math.pow(1 + r, y), 0);
+  let lo = -0.5, hi = 2; for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2; (cf.reduce((a, c, y) => a + c / Math.pow(1 + m, y), 0) > 0) ? lo = m : hi = m; }
+  const pb = k.pb, cum = cf.reduce((a, v) => a + v, 0);
+  const lcoe = (k.approxCostIqd + k.cf.extra) / Math.max(1, k.kwh25), fx = N('fx', 1320);
+  const a1 = pvCost(kwp), a2 = kw * N('priceInv', 120), a3 = bat * N('priceBat', 260), a4 = (a1 + a2 + a3) * N('bosPct', 10) / 100;
+  const cb = [['لوحە و ستراکچەر', a1, '#fbbf24'], ['ئینڤێرتەر', a2, '#34d399'], ['پاتری', a3, '#60a5fa'], ['کرێ و تر', a4, '#f472b6']];
+  const tot = cb.reduce((a, x) => a + x[1], 0) || 1, C = 2 * Math.PI * 40; let off = 0;
+  const segs = cb.map(([, v, c]) => { const L = v / tot * C; const e = `<circle cx="60" cy="60" r="40" fill="none" stroke="${c}" stroke-width="16" stroke-dasharray="${L} ${C - L}" stroke-dashoffset="${-off}" transform="rotate(-90 60 60)"/>`; off += L; return e; }).join('');
+  const row = (l, v, c = 'text-white') => `<div class="row"><span class="text-slate-400">${l}</span><span class="font-bold ${c}">${v}</span></div>`;
+  const bd = (ok, a, b) => ok ? `<span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300">✓ ${a}</span>` : `<span class="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300">⚠ ${b}</span>`;
+  const sec = (t, g2, rows) => `<div class="rounded-2xl overflow-hidden border border-slate-800"><div class="bg-gradient-to-r ${g2} px-3 py-2 text-white text-xs font-black">${t}</div><div class="bg-slate-950 p-3 text-xs space-y-1.5">${rows}</div></div>`;
+  const kpi = (t, v, g2) => `<div class="rounded-2xl p-3 text-white bg-gradient-to-br ${g2} shadow"><div class="text-[10px] opacity-90">${t}</div><div class="font-black text-sm mt-1">${v}</div></div>`;
+  o.innerHTML = `<div class="grid grid-cols-2 gap-2">${kpi('⚡ توانای سیستەم', f1(kwp, 2) + ' kWp', 'from-amber-500 to-orange-600')}${kpi('💵 تێچووی پڕۆژە', '$' + fmt(k.costUsd), 'from-sky-500 to-blue-700')}${kpi('⏳ گەڕانەوەی سەرمایە', pb === null ? '—' : f1(pb) + ' ساڵ', 'from-rose-500 to-pink-600')}${kpi('📈 NPV ی ٢٥ ساڵ', fmt(npv / fx) + ' $', 'from-emerald-500 to-teal-700')}</div>`
+    + sec('1️⃣ بارگرانی و مەسرەف', 'from-slate-600 to-slate-800', row('مەسرەفی مانگانە', fmt(use) + ' kWh') + row('مەسرەفی ڕۆژانە', f1(use / 30) + ' kWh') + row('بارگرانی لووتکە', N('loadKw', 6) + ' kW') + row('بارگرانی شەو', night + ' kW'))
+    + sec('2️⃣ لوحەکان', 'from-amber-500 to-orange-600', row('پێویست بۆ ئامانج', needP + ' لوح (' + f1(needKwp, 2) + ' kWp)') + row('دانراو', P + ' لوح (' + f1(kwp, 2) + ' kWp)', 'text-amber-400') + row('پوشاندنی مەسرەف', f1(covAct, 0) + '% ' + bd(covAct >= N('cover', 90) - 5, 'گونجاو', 'کەمە')) + row('ڕووبەری پێویست', f1(area) + ' m²') + row('بەرهەمی ساڵانە', fmt(k.annualKwh) + ' kWh') + row('Specific Yield', fmt(k.annualKwh / kwp) + ' kWh/kWp'))
+    + sec('3️⃣ ستەرینگ و MPPT', 'from-lime-500 to-green-600', row('Voc لە سەرمای ' + N('tMin', -5) + '°C', f1(vocCold) + ' V') + row('ژمارەی لوح لە هەر ستەرینگ', s + ' (ڕێگەپێدراو ' + sMin + '–' + sMax + ') ' + bd(okS, 'باشە', 'ڕێکبخە')) + row('ژمارەی ستەرینگ', strs + ' (' + perM + ' بۆ هەر MPPT)') + row('جەریان لە MPPT', f1(perM * isc) + ' A ' + bd(okI, 'باشە', 'زۆرە')))
+    + sec('4️⃣ ئینڤێرتەر', 'from-teal-500 to-cyan-600', row('توانای دانراو', kw + ' kW') + row('پێشنیارکراو (کەمترین)', f1(recKw) + ' kW', 'text-teal-300') + row('DC/AC', f1(ratio, 2) + ' ' + bd(ratio >= 0.9 && ratio <= 1.5, 'گونجاو', 'نەگونجاو')))
+    + sec('5️⃣ پاتری', 'from-blue-500 to-indigo-600', row('پێویست بۆ ' + aut + ' کاتژمێر', f1(needBat) + ' kWh (' + needU + ' یەکە)') + row('دانراو', f1(bat) + ' kWh (' + (state.systemTopology === 'ongrid' ? 0 : state.batteryQty) + ' یەکە)', 'text-blue-300') + row('کاتی پشتگیری', f1(hrs) + ' کاتژمێر ' + bd(hrs >= aut, 'تەواو', 'کەمە')))
+    + sec('6️⃣ بریکەر و کەیبڵ', 'from-violet-500 to-purple-600', row('جەریانی AC', f1(iAc) + ' A' + (three ? ' / فەیز' : '')) + row('بریکەری AC', brk + ' A') + row('کەیبڵی AC', acCab) + row('جەریانی DC (Isc×1.25)', f1(isc * 1.25) + ' A') + row('کەیبڵی DC', dcCab))
+    + `<div class="rounded-2xl overflow-hidden border border-slate-800"><div class="bg-gradient-to-r from-pink-500 to-rose-600 px-3 py-2 text-white text-xs font-black">7️⃣ دارایی و تێچوو</div><div class="bg-slate-950 p-3 text-xs grid grid-cols-5 gap-2 items-center"><svg viewBox="0 0 120 120" style="direction:ltr" class="col-span-2 w-full">${segs}<text x="60" y="65" font-size="14" font-weight="bold" text-anchor="middle" fill="#fff">$${fmt(tot)}</text></svg><div class="col-span-3 space-y-1">${cb.map(([l, v, c]) => `<div class="row"><span style="color:${c}">● ${l}</span><b class="text-white">$${fmt(v)}</b></div>`).join('')}</div></div><div class="bg-slate-950 px-3 pb-3 text-xs space-y-1.5">${row('تێچووی تەواو', fmt(k.approxCostIqd) + ' IQD')}${row('پاشەکەوتی ساڵی یەکەم', fmt(ys) + ' IQD')}${row('IRR', f1(lo * 100) + '%', 'text-emerald-400')}${row('NPV', fmt(npv) + ' IQD', npv > 0 ? 'text-emerald-400' : 'text-rose-400')}${row('نرخی کارەبای سۆلار (LCOE)', f1(lcoe) + ' IQD/kWh', 'text-amber-400')}${row('قازانجی خاوێنی ٢٥ ساڵ', fmt(cum) + ' IQD', 'text-emerald-400')}</div></div>`
+    + sec('8️⃣ ژینگە', 'from-emerald-500 to-green-700', row('CO₂ ی ساڵانە', f1(k.annualCo2Tons) + ' تەن') + row('CO₂ ی ٢٥ ساڵ', f1(k.co2_25) + ' تەن') + row('بەرامبەر درەخت (٢٥ ساڵ)', fmt(k.trees25)));
+}
+
+/* tab 5 v3: simple finance view (replaces the earlier buildFinanceTab) */
+/* tab 5 v4: minimal finance view (overrides earlier versions) */
+function buildFinanceTab() {
+  const old = $('tabContent-settings'); if (old) old.remove();
+  const inp = (id, l, v) => `<label class="block"><span class="text-[11px] text-slate-400">${l}</span><input type="number" id="${id}" value="${v}" oninput="updateSystemCalculations()" class="mt-1 w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm font-bold text-white text-center"></label>`;
+  const bar = (vid, bid, t, c) => `<div><div class="flex justify-between text-xs mb-1"><span class="text-slate-300">${t}</span><b id="${vid}" class="text-white">-</b></div><div class="h-2.5 rounded-full bg-slate-800 overflow-hidden"><div id="${bid}" class="h-full rounded-full transition-all duration-500" style="width:0;background:${c}"></div></div></div>`;
+  $('tabContent-rwnaki').innerHTML = `
+  <div class="text-center pt-2 pb-1">
+    <div class="text-xs text-slate-400">پاشەکەوتی مانگانە</div>
+    <div id="monthlySavings" class="text-3xl font-black text-emerald-400 my-1">-</div>
+    <div class="text-xs text-slate-400">ساڵانە <b id="yearSave" class="text-white">-</b> · گەڕانەوەی سەرمایە <b id="roiYears" class="text-amber-400">-</b></div>
+  </div>
+  <div class="grid grid-cols-2 gap-3">${inp('monthlyKwhUse', 'مەسرەفی مانگانە (kWh)', 1600)}${inp('generatorCost', 'پارەی مۆلیدە (دینار)', 150000)}</div>
+  <div class="rounded-2xl border border-slate-800 bg-slate-950 p-4 space-y-3">
+    <div class="text-xs font-bold text-slate-200">فەتوورەی مانگانە: پێش و دوای سۆلار <span id="savePct" class="mr-2 text-emerald-400"></span></div>
+    ${bar('billPreSolar', 'barPre', 'پێش سۆلار', '#fb7185')}${bar('billPostHybrid', 'barHyb', 'هایبرید', '#34d399')}${bar('billPostOngrid', 'barOn', 'ئۆن-گرید', '#60a5fa')}
+  </div>
+  <details class="rounded-2xl border border-slate-800 bg-slate-950 p-3">
+    <summary class="cursor-pointer text-xs font-bold text-slate-200">⚙️ ڕێکخستنی پێشکەوتوو</summary>
+    <div id="setGrid" class="flex flex-col gap-2 mt-3"></div>
+    <div class="text-xs space-y-1.5 mt-3 pt-3 border-t border-slate-800">
+      <div class="row"><span class="text-slate-400">کولفەی سیستەم (PR)</span><b id="sumPR" class="text-amber-400">-</b></div>
+      <div class="row"><span class="text-slate-400">بەرهەمی ساڵانە بۆ هەر kWp</span><b id="sumYield" class="text-emerald-400">-</b></div>
+      <div class="row"><span class="text-slate-400">کۆی تێچووی پڕۆژە</span><b id="sumCost" class="text-white">-</b></div>
+    </div>
+  </details>`;
+}
+function foldSettings() {
+  [...$('setGrid').children].forEach(c => {
+    const t = c.firstElementChild, b = c.lastElementChild;
+    const d = document.createElement('details');
+    d.className = 'rounded-xl border border-slate-800 bg-slate-900 px-3 py-2 text-xs';
+    const s = document.createElement('summary');
+    s.className = 'cursor-pointer font-bold text-slate-200'; s.innerHTML = t.innerHTML;
+    b.classList.add('mt-2'); d.append(s, b); c.replaceWith(d);
+  });
+}
+function renderFin() {
+  const k = window._cost; if (!k || !$('barPre')) return;
+  const m = Math.max(k.preSolarTotal, 1);
+  [['barPre', k.preSolarTotal], ['barHyb', k.postSolarHybrid], ['barOn', k.postSolarOngrid]].forEach(([id, v]) => { $(id).style.width = Math.max(2, v / m * 100) + '%'; });
+  setText('yearSave', Math.round(k.monthlySavings * 12).toLocaleString() + ' دینار');
+  setText('savePct', k.preSolarTotal > 0 ? '↓ ' + Math.round(k.monthlySavings / k.preSolarTotal * 100) + '%' : '');
+}
+
+/* ===== climate & city production model ===== */
+const MDAY = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31], NMID = [17, 47, 75, 105, 135, 162, 198, 228, 258, 288, 318, 344];
+const MN = ['کانوونی دووەم', 'شوبات', 'ئازار', 'نیسان', 'ئایار', 'حوزەیران', 'تەمموز', 'ئاب', 'ئەیلوول', 'تشرینی یەکەم', 'تشرینی دووەم', 'کانوونی یەکەم'];
+const CAL = { // NASA POWER via profileSOLAR: avg daily irradiation on the optimum-tilted plane [summer, autumn, winter, spring] kWh/m²/day + tilt
+  Erbil: [8.61, 5.00, 3.02, 6.57, 31], Duhok: [8.58, 4.99, 3.26, 6.73, 31], Mosul: [8.36, 4.98, 3.17, 6.54, 31], Nineveh: [8.57, 4.95, 3.21, 6.71, 31],
+  Sulaymaniyah: [8.56, 5.19, 3.31, 6.75, 30], Kirkuk: [8.50, 5.12, 3.43, 6.85, 30], Kelar: [8.64, 5.25, 3.49, 6.93, 30], Tikrit: [8.46, 5.14, 3.59, 7.00, 30],
+  Samarra: [8.53, 5.16, 3.62, 7.00, 29], Baqubah: [8.32, 5.22, 3.69, 6.98, 29], Baghdad: [8.32, 5.22, 3.69, 6.98, 29], Ramadi: [8.32, 5.16, 3.75, 7.03, 29],
+  Karbala: [8.29, 5.31, 3.74, 7.09, 28], Kut: [8.33, 5.29, 3.73, 7.08, 28], Qadisiyah: [8.22, 5.26, 3.81, 7.08, 28], Samawah: [8.18, 5.32, 3.87, 7.09, 27],
+  Nasiriyah: [8.31, 5.38, 3.85, 7.13, 27], Amarah: [8.32, 5.38, 3.83, 6.99, 27], Basra: [8.41, 5.68, 4.20, 7.26, 27]
+};
+// region|name|lat|Kt summer|Kt winter|mean temp °C|temp amplitude °C|data ref|scale|flag (empty = own NASA data, 1 = nearest city's data, 2 = rough estimate)
+const CITIES = `هەرێمی کوردستان|هەولێر - Erbil|36.19|.68|.44|20.5|14|Erbil|1|
+هەرێمی کوردستان|سلێمانی - Sulaymaniyah|35.56|.68|.43|18.5|13.5|Sulaymaniyah|1|
+هەرێمی کوردستان|دهۆک - Duhok|36.87|.67|.40|19|13|Duhok|1|
+هەرێمی کوردستان|ڕانیە - Ranya|36.25|.67|.42|18.5|13.5|Erbil|1|
+هەرێمی کوردستان|کەلار - Kalar|34.63|.69|.47|22|15|Kelar|1|
+هەرێمی کوردستان|هەڵەبجە - Halabja|35.18|.68|.43|17.5|13|Sulaymaniyah|1|1
+هەرێمی کوردستان|زاخۆ - Zakho|37.14|.66|.40|18.5|13|Duhok|1|1
+هەرێمی کوردستان|کۆیە - Koya|36.08|.68|.44|19.5|14|Erbil|1|1
+هەرێمی کوردستان|سۆران - Soran|36.65|.66|.40|16.5|13|Erbil|1|1
+هەرێمی کوردستان|ئاکرێ - Akre|36.75|.66|.40|18|13|Duhok|1|1
+هەرێمی کوردستان|چەمچەماڵ - Chamchamal|35.53|.68|.44|19|14|Sulaymaniyah|1|1
+هەرێمی کوردستان|دەربەندیخان - Darbandikhan|35.11|.68|.44|20|14|Sulaymaniyah|1|1
+هەرێمی کوردستان|پێنجوێن - Penjwen|35.62|.66|.38|14|12.5|Sulaymaniyah|1|1
+هەرێمی کوردستان|شەقڵاوە - Shaqlawa|36.40|.66|.40|16.5|13|Erbil|1|1
+هەرێمی کوردستان|مێرگەسۆڕ - Mergasor|36.84|.65|.38|15|12.5|Duhok|1|1
+هەرێمی کوردستان|ئامێدی - Amedi|37.09|.65|.38|16|13|Duhok|1|1
+عێراق|موسڵ - Mosul|36.34|.70|.46|21|14.5|Mosul|1|
+عێراق|کەرکووک - Kirkuk|35.47|.70|.47|21.5|14.5|Kirkuk|1|
+عێراق|شنگال - Sinjar|36.32|.70|.47|20|14|Nineveh|1|1
+عێراق|تکریت - Tikrit|34.60|.72|.50|23|15|Tikrit|1|
+عێراق|سامەڕا - Samarra|34.20|.72|.50|23|14.5|Samarra|1|
+عێراق|بەعقوبە - Baqubah|33.75|.72|.52|23|14.5|Baqubah|1|
+عێراق|بەغدا - Baghdad|33.31|.73|.52|23.5|14.5|Baghdad|1|
+عێراق|فەلوجە - Fallujah|33.35|.73|.52|23|15|Ramadi|1|
+عێراق|ڕەمادی - Ramadi|33.42|.73|.52|23|15|Ramadi|1|
+عێراق|کەربەلا - Karbala|32.62|.74|.54|24|14.5|Karbala|1|
+عێراق|نەجەف - Najaf|32.00|.75|.56|25|14|Karbala|1|
+عێراق|حیلە - Hilla|32.47|.74|.54|24.5|14.5|Karbala|1|
+عێراق|کووت - Kut|32.51|.73|.53|24.5|14.5|Kut|1|
+عێراق|دیوانیە - Diwaniyah|31.99|.74|.55|25|14.5|Qadisiyah|1|
+عێراق|سەماوە - Samawah|31.31|.75|.57|25.5|14.5|Samawah|1|
+عێراق|ناسریە - Nasiriyah|31.05|.74|.57|25.5|14|Nasiriyah|1|
+عێراق|عەمارە - Amarah|31.84|.73|.55|25|14.5|Amarah|1|
+عێراق|بەسرە - Basra|30.51|.72|.56|25.5|13.5|Basra|1|
+ئێران|تاران - Tehran|35.69|.72|.48|17.5|14.5|Erbil|1|2
+ئێران|سنە - Sanandaj|35.31|.69|.46|13.5|14|Erbil|.97|2
+ئێران|کرماشان - Kermanshah|34.31|.70|.48|15|14.5|Sulaymaniyah|1|2
+ئێران|ورمێ - Urmia|37.55|.67|.42|11.5|14.5|Duhok|.95|2
+ئێران|تەورێز - Tabriz|38.08|.68|.44|12|15|Duhok|.95|2
+ئێران|ئەھواز - Ahvaz|31.32|.72|.55|26|13.5|Amarah|1|2
+ئێران|ئیسفەهان - Isfahan|32.65|.76|.58|17|14.5|Karbala|1|2
+تورکیا|ئامەد - Diyarbakir|37.91|.70|.42|16.5|14.5|Duhok|1|2
+تورکیا|وان - Van|38.49|.68|.43|9.5|14.5|Duhok|.95|2
+تورکیا|ئەنقەرە - Ankara|39.93|.66|.38|12|12|Duhok|.9|2
+تورکیا|ئیستانبوڵ - Istanbul|41.01|.60|.32|14.5|10.5|Duhok|.78|2
+سوریا|دیمەشق - Damascus|33.51|.74|.52|17.5|11|Karbala|.97|2
+سوریا|حەلەب - Aleppo|36.20|.70|.46|18|12|Mosul|1|2
+سوریا|قامیشلۆ - Qamishli|37.05|.71|.46|19.5|14|Mosul|1|2
+وڵاتانی تر|کوەیت - Kuwait|29.38|.74|.56|27|14|Basra|1|2
+وڵاتانی تر|ڕیاض - Riyadh|24.70|.77|.64|25.5|11|Basra|1.03|2
+وڵاتانی تر|دوبەی - Dubai|25.20|.74|.64|27.5|8|Basra|.97|2
+وڵاتانی تر|عەممان - Amman|31.95|.76|.58|18|9|Karbala|.97|2
+وڵاتانی تر|بەیروت - Beirut|33.89|.68|.48|21|6.5|Mosul|.9|2
+وڵاتانی تر|قاهیرە - Cairo|30.04|.74|.60|22|8|Basra|1|2`.split('\n').map(l => l.split('|'));
+function calOf(sel) {
+  if (sel === 'custom') return null;
+  const c = CITIES[+sel], r = c && CAL[c[7]]; if (!r) return null;
+  const k = +c[8] || 1; return { s: r.slice(0, 4).map(v => v * k), t0: r[4] };
+}
+
+function climMonthly(lat, Ks, Kw, Tm, Ta, tiltDeg, azDeg) {
+  const R = Math.PI / 180, phi = lat * R, beta = tiltDeg * R, out = [];
+  for (let m = 0; m < 12; m++) {
+    const n = NMID[m], dec = 23.45 * R * Math.sin(2 * Math.PI * (284 + n) / 365), E0 = 1 + 0.033 * Math.cos(2 * Math.PI * n / 365);
+    const ws = Math.acos(clamp(-Math.tan(phi) * Math.tan(dec), -1, 1));
+    const geo = (p, w) => Math.cos(p) * Math.cos(dec) * Math.sin(w) + w * Math.sin(p) * Math.sin(dec);
+    const H0 = (24 / Math.PI) * 1.367 * E0 * geo(phi, ws);
+    const Kt = (Ks + Kw) / 2 + (Ks - Kw) / 2 * Math.cos(2 * Math.PI * (m - 6) / 12), H = Kt * H0;
+    const fd = ws <= 1.4208 ? 1.391 - 3.56 * Kt + 4.189 * Kt * Kt - 2.137 * Kt ** 3 : 1.311 - 3.022 * Kt + 3.427 * Kt * Kt - 1.821 * Kt ** 3;
+    const Hd = H * clamp(fd, 0.1, 0.9), Hb = H - Hd;
+    const wsT = Math.min(ws, Math.acos(clamp(-Math.tan(phi - beta) * Math.tan(dec), -1, 1)));
+    const Rb = Math.max(0, geo(phi - beta, wsT) / geo(phi, ws));
+    let HT = Hb * Rb + Hd * (1 + Math.cos(beta)) / 2 + H * 0.2 * (1 - Math.cos(beta)) / 2;
+    HT *= 1 - (1 - Math.cos((azDeg - 180) * R)) * 0.35 * Math.sin(beta);
+    out.push({ H, HT: Math.max(0, HT), T: Tm + Ta * Math.cos(2 * Math.PI * (m - 6.3) / 12) });
+  }
+  return out;
+}
+function syncClimate() {
+  if (!$('cLat')) return;
+  const P = [N('cLat', 36.19), N('cKs', 0.68), N('cKw', 0.44), N('cTm', 20.5), N('cTa', 14)];
+  const c = climMonthly(...P, state.tilt, state.azimuth), cal = calOf($('climCity').value);
+  if (cal) {   // calibrate the model to the measured/NASA seasonal values of the chosen city
+    const b = climMonthly(...P, cal.t0, 180), sm = ix => ix.reduce((a, i) => a + b[i].HT, 0) / 3;
+    const r = [cal.s[0] / sm([5, 6, 7]), cal.s[1] / sm([8, 9, 10]), cal.s[2] / sm([11, 0, 1]), cal.s[3] / sm([2, 3, 4])];
+    const A = [[0, r[2]], [3, r[3]], [6, r[0]], [9, r[1]], [12, r[2]]];
+    const f = c.map((_, m) => { let k = 0; while (m > A[k + 1][0]) k++; return A[k][1] + (A[k + 1][1] - A[k][1]) * (m - A[k][0]) / (A[k + 1][0] - A[k][0]); });
+    const SE = [[5, 6, 7], [8, 9, 10], [11, 0, 1], [2, 3, 4]];
+    for (let it = 0; it < 5; it++) SE.forEach((ix, j) => { const mean = ix.reduce((a, i) => a + b[i].HT * f[i], 0) / 3; ix.forEach(i => { f[i] *= cal.s[j] / mean; }); });
+    c.forEach((x, m) => { x.HT *= f[m]; });
+  }
+  const lt = 1 - N('lossTemp', 8) / 100;
+  const eff = c.map(x => x.HT * (1 - Math.max(0, 0.003 * (x.T + 5))) / lt);   // cell temp ≈ monthly mean + ~5 (daytime) + 25 over STC, -0.3%/°C above 25°C
+  window._clim = { c, eff };
+  const auto = $('climAuto').checked;
+  [[1, [5, 6, 7]], [2, [2, 3, 4]], [3, [8, 9, 10]], [4, [11, 0, 1]]].forEach(([k, ix]) => {
+    const e = $('psh' + k); if (!e) return;
+    if (auto) e.value = (ix.reduce((a, i) => a + eff[i], 0) / 3).toFixed(2);
+    e.readOnly = auto;
+  });
+}
+function monthlyPSH() {
+  const a = $('climAuto'), m = window._clim;
+  if (a && a.checked && m) return m.eff;
+  const s = [4, 4, 2, 2, 2, 1, 1, 1, 3, 3, 3, 4];
+  return s.map(i => N('psh' + i, [0, 6.5, 5.2, 4.5, 3][i]));
+}
+function buildClimateTab() {
+  const groups = {}; CITIES.forEach((c, i) => (groups[c[0]] = groups[c[0]] || []).push([i, c[1] + (c[9] === '1' ? ' *' : c[9] === '2' ? ' ⚠' : '')]));
+  const sel = Object.entries(groups).map(([g, a]) => `<optgroup label="${g}">${a.map(([i, n]) => `<option value="${i}">${n}</option>`).join('')}</optgroup>`).join('') + '<option value="custom">✏️ شاری دەستی (خۆت بنووسە)</option>';
+  const F = [['cLat', 'ڕەهەندی پانی (°N)', 36.19], ['cKs', 'ڕوونی ئاسمان هاوین (Kt)', 0.68], ['cKw', 'ڕوونی ئاسمان زستان (Kt)', 0.44], ['cTm', 'تێکڕای گەرما °C', 20.5], ['cTa', 'جیاوازی گەرمای ساڵ °C', 14]];
+  const d = document.createElement('div');
+  d.id = 'tabContent-climate'; d.className = 'tab-pane hidden flex flex-col gap-4';
+  d.innerHTML = `<div class="rounded-2xl p-4 bg-gradient-to-br from-sky-500 via-blue-600 to-indigo-700 text-white shadow-lg"><div class="text-sm font-black">🌦️ کەشوهەوا و بەرهەمهێنان</div><div class="text-[11px] opacity-90">بەرهەمی سیستەمەکە لە هەر چوار وەرز، بەپێی کەشوهەوای شارەکەت</div></div>
+  <div class="fld text-xs space-y-2"><label class="lb">📍 شار هەڵبژێرە</label><select id="climCity" onchange="onCityChange()" class="sel">${sel}</select>
+  <label class="flex items-center gap-2 text-slate-300"><input type="checkbox" id="climAuto" checked onchange="updateSystemCalculations()" class="accent-emerald-500"> بەکارهێنانی کەشوهەوا بۆ ژمارەی تیشکی وەرزەکان (خۆکار)</label></div>
+  <details class="fld text-xs"><summary class="font-bold cursor-pointer text-slate-200">✏️ پارامەترەکانی شار (دەستکاری بکە)</summary><div class="grid grid-cols-2 gap-2 mt-2">${F.map(([id, l, v]) => `<div><label class="lb">${l}</label><input id="${id}" type="number" step="any" value="${v}" oninput="$('climCity').value='custom';updateSystemCalculations()" class="inp text-white"></div>`).join('')}</div></details>
+  <div id="climOut" class="flex flex-col gap-3"></div>`;
+  $('tabContent-rwnaki').parentNode.appendChild(d);
+  $('climCity').value = CITIES.findIndex(c => c[1].includes('Erbil'));
+}
+function onCityChange() {
+  const v = $('climCity').value; if (v === 'custom') return updateSystemCalculations();
+  const c = CITIES[+v];
+  [['cLat', 2], ['cKs', 3], ['cKw', 4], ['cTm', 5], ['cTa', 6]].forEach(([id, i]) => { $(id).value = parseFloat(c[i]); });
+  updateSystemCalculations();
+}
+function renderClimate() {
+  const k = window._cost, o = $('climOut'); if (!k || !o || !window._clim) return;
+  const eff = monthlyPSH(), c = window._clim.c, fmt = n => Math.round(n).toLocaleString();
+  const kwh = eff.map((p, m) => k.totalKwp * k.PR * p * MDAY[m]), tot = kwh.reduce((a, b) => a + b, 0);
+  const S = [['☀️ هاوین', 'from-amber-500 to-orange-600', [5, 6, 7]], ['🍂 پاییز', 'from-orange-500 to-red-600', [8, 9, 10]], ['❄️ زستان', 'from-cyan-500 to-blue-600', [11, 0, 1]], ['🌸 بەهار', 'from-emerald-500 to-teal-600', [2, 3, 4]]];
+  const cards = S.map(([n, g, ix]) => { const s = ix.reduce((a, i) => a + kwh[i], 0), d = ix.reduce((a, i) => a + MDAY[i], 0), p = ix.reduce((a, i) => a + eff[i], 0) / 3;
+    return `<div class="rounded-2xl p-3 text-white bg-gradient-to-br ${g} shadow"><div class="text-xs font-bold">${n}</div><div class="text-lg font-black mt-1">${fmt(s)} <span class="text-[10px] font-semibold">kWh</span></div><div class="text-[10px] opacity-90 mt-1">ڕۆژانە ${(s / d).toFixed(1)} kWh · ${p.toFixed(1)} کاتژمێر تیشک</div><div class="text-[10px] opacity-90">${(s / tot * 100).toFixed(0)}٪ی بەرهەمی ساڵ</div></div>`; }).join('');
+  const mx = Math.max(...kwh, 1), best = kwh.indexOf(mx), worst = kwh.indexOf(Math.min(...kwh));
+  const col = ['#22d3ee', '#22d3ee', '#34d399', '#34d399', '#34d399', '#fbbf24', '#fbbf24', '#fbbf24', '#fb923c', '#fb923c', '#fb923c', '#22d3ee'];
+  const bars = kwh.map((v, i) => { const h = v / mx * 95, x = 8 + i * 28; return `<rect x="${x}" y="${108 - h}" width="22" height="${h}" rx="4" fill="${col[i]}"/><text x="${x + 11}" y="${104 - h}" font-size="7" text-anchor="middle" fill="#cbd5e1">${Math.round(v)}</text><text x="${x + 11}" y="122" font-size="8" text-anchor="middle" fill="#94a3b8">${i + 1}</text>`; }).join('');
+  const rows = kwh.map((v, i) => `<div class="grid grid-cols-4 gap-1 py-1 border-b border-slate-800/70"><span class="text-slate-300">${MN[i]}</span><span class="text-center text-amber-300">${eff[i].toFixed(2)}</span><span class="text-center text-sky-300">${c[i].T.toFixed(0)}°</span><b class="text-left text-emerald-400">${fmt(v)}</b></div>`).join('');
+  const kp = (t, v, g) => `<div class="rounded-2xl p-3 text-white bg-gradient-to-br ${g} shadow"><div class="text-[10px] opacity-90">${t}</div><div class="font-black text-sm mt-1">${v}</div></div>`;
+  o.innerHTML = `<div class="grid grid-cols-2 gap-2">${kp('📊 بەرهەمی ساڵانە', fmt(tot) + ' kWh', 'from-violet-500 to-purple-700')}${kp('⚡ بۆ هەر kWp', fmt(tot / k.totalKwp) + ' kWh', 'from-lime-500 to-green-700')}${kp('🔆 باشترین مانگ', MN[best] + ' · ' + fmt(kwh[best]), 'from-amber-500 to-orange-600')}${kp('☁️ کەمترین مانگ', MN[worst] + ' · ' + fmt(kwh[worst]), 'from-slate-500 to-slate-700')}</div>
+  <div class="text-xs font-bold text-slate-200">بەرهەم لە هەر وەرزێک (${k.totalKwp.toFixed(2)} kWp)</div><div class="grid grid-cols-2 gap-2">${cards}</div>
+  <div class="rounded-2xl border border-slate-800 bg-slate-950 p-3"><div class="text-xs font-bold text-slate-200 mb-2">📈 بەرهەمی مانگانە (kWh)</div><svg viewBox="0 0 350 128" style="direction:ltr" class="w-full">${bars}</svg></div>
+  <div class="rounded-2xl border border-slate-800 bg-slate-950 p-3 text-[11px]"><div class="grid grid-cols-4 gap-1 pb-1 text-slate-500 font-bold"><span>مانگ</span><span class="text-center">تیشک (کاتژمێر)</span><span class="text-center">گەرما</span><span class="text-left">kWh</span></div>${rows}</div>
+  <div class="text-[11px] text-slate-400">ئەم ژمارانە مەزەندەن لە مۆدێلی تیشکی خۆر، بەپێی ڕەهەندی پانی و ڕوونی ئاسمان و لارییە و ئاراستەی لوحەکان. لە ڕاستیدا ١٠–١٥٪ جیاوازییان هەیە.<br>سەرچاوە: داتای NASA POWER بۆ شارەکانی عێراق و کوردستان. * = داتای نزیکترین شار بەکارهاتووە. ⚠ = مەزەندەی ناڕوون (دەرەوەی عێراق)، دڵنیا بە لە PVGIS. بۆ شارێکی نوێ "شاری دەستی" هەڵبژێرە (بێ ڕاستکردنەوە).</div>`;
+}
+
+const roof = { img: null, x: 0.5, y: 0.5, rot: 0, drag: false };
+function loadRoof(e) {
+  const f = e.target.files[0]; if (!f) return;
+  const im = new Image(); im.onload = () => { roof.img = im; redrawRoof(); }; im.src = URL.createObjectURL(f);
+}
+function initRoof() {
+  const c = $('roofCanvas');
+  const pos = e => { const r = c.getBoundingClientRect(); return [(e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height]; };
+  c.onpointerdown = e => { roof.drag = true; c.setPointerCapture(e.pointerId); [roof.x, roof.y] = pos(e); redrawRoof(); };
+  c.onpointermove = e => { if (roof.drag) { [roof.x, roof.y] = pos(e); redrawRoof(); } };
+  c.onpointerup = () => { roof.drag = false; };
+}
+function redrawRoof() {
+  const c = $('roofCanvas'); if (!c) return;
+  const g = c.getContext('2d');
+  g.fillStyle = '#0b1220'; g.fillRect(0, 0, c.width, c.height);
+  let iw = c.width;
+  if (roof.img) {
+    const s = Math.min(c.width / roof.img.width, c.height / roof.img.height);
+    iw = roof.img.width * s;
+    g.drawImage(roof.img, (c.width - iw) / 2, (c.height - roof.img.height * s) / 2, iw, roof.img.height * s);
+  } else { g.fillStyle = '#64748b'; g.font = '22px sans-serif'; g.textAlign = 'center'; g.fillText('وێنەی سەربان باربکە', c.width / 2, c.height / 2); }
+  const ppm = iw / Math.max(1, N('roofImgW', 12));
+  const flat = ['sandwich', 'minirail'].includes(state.structureType);
+  const pw = state.panelWidth * ppm, pl = state.panelLength * (flat ? 1 : Math.cos(state.tilt * Math.PI / 180)) * ppm;
+  const W = state.cols * pw, H = state.rows * pl;
+  g.save(); g.translate(roof.x * c.width, roof.y * c.height); g.rotate(roof.rot * Math.PI / 180);
+  for (let r = 0; r < state.rows; r++) for (let k = 0; k < state.cols; k++) {
+    g.fillStyle = 'rgba(30,64,175,.85)'; g.fillRect(-W / 2 + k * pw + 1, -H / 2 + r * pl + 1, pw - 2, pl - 2);
+    g.strokeStyle = '#93c5fd'; g.strokeRect(-W / 2 + k * pw + 1, -H / 2 + r * pl + 1, pw - 2, pl - 2);
+  }
+  g.fillStyle = '#f59e0b';
+  [[-W / 2, -H / 2], [W / 2, -H / 2], [-W / 2, H / 2], [W / 2, H / 2]].forEach(([x, y]) => { g.beginPath(); g.arc(x, y, 5, 0, 7); g.fill(); });
+  g.restore();
+  setText('roofInfo', `${structureNames[state.structureType]} — ${(W / ppm).toFixed(1)} × ${(H / ppm).toFixed(1)} م — ڕایبکێشە بۆ جێگۆڕکێ`);
+}
+
+function openProposalModal() {
+  const m = document.getElementById('printProposalModal');
+  m.classList.remove('hidden'); m.classList.add('flex');
+}
+function closeProposalModal() {
+  const m = document.getElementById('printProposalModal');
+  m.classList.add('hidden'); m.classList.remove('flex');
+}
+
+/* ---------- THREE.JS ---------- */
+let scene, camera, renderer, controls, solarGroup;
+
+function init3D() {
+  const container = document.getElementById('threeContainer');
+  const width = container.clientWidth, height = container.clientHeight;
+
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x090d16);
+  scene.fog = new THREE.FogExp2(0x090d16, 0.035);
+
+  camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+  camera.position.set(7, 5, 10);
+
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setSize(width, height);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  container.appendChild(renderer.domElement);
+
+  controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.05;
+  controls.maxPolarAngle = Math.PI / 2 + 0.05;
+  controls.minDistance = 2;
+  controls.maxDistance = 35;
+  controls.target.set(0, 1.2, 0);
+
+  scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+  const sun = new THREE.DirectionalLight(0xfff5e6, 1.3);
+  sun.position.set(8, 14, 10);
+  sun.castShadow = true;
+  sun.shadow.mapSize.width = 1024; sun.shadow.mapSize.height = 1024; sun.shadow.bias = -0.0005;
+  scene.add(sun);
+  scene.add(new THREE.HemisphereLight(0x38bdf8, 0x1e293b, 0.35));
+
+  const grid = new THREE.GridHelper(30, 30, 0x10b981, 0x1e293b);
+  grid.position.y = -0.01;
+  scene.add(grid);
+
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(35, 35), new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.9, metalness: 0.1 }));
+  ground.rotation.x = -Math.PI / 2;
+  ground.receiveShadow = true;
+  scene.add(ground);
+
+  solarGroup = new THREE.Group();
+  scene.add(solarGroup);
+
+  window.addEventListener('resize', onWindowResize);
+  animate();
+}
+
+function onWindowResize() {
+  const c = document.getElementById('threeContainer');
+  if (!c || !renderer || !camera) return;
+  camera.aspect = c.clientWidth / c.clientHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(c.clientWidth, c.clientHeight);
+}
+
+function reset3DCamera() {
+  if (!camera || !controls) return;
+  camera.position.set(7, 5, 10);
+  controls.target.set(0, 1.2, 0);
+  controls.update();
+}
+
+function createSolarPanelTexture() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 512; canvas.height = 1024;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#06172e'; ctx.fillRect(0, 0, 512, 1024);
+  ctx.strokeStyle = '#1e3a5f'; ctx.lineWidth = 1.5;
+  const cc = 6, cr = 24, cw = 512 / cc, ch = 1024 / cr;
+  for (let i = 0; i <= cc; i++) { ctx.beginPath(); ctx.moveTo(i * cw, 0); ctx.lineTo(i * cw, 1024); ctx.stroke(); }
+  for (let j = 0; j <= cr; j++) { ctx.beginPath(); ctx.moveTo(0, j * ch); ctx.lineTo(512, j * ch); ctx.stroke(); }
+  ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1;
+  for (let b = 0; b < cc; b++) {
+    const x = b * cw + cw / 2;
+    [-8, 8].forEach(o => { ctx.beginPath(); ctx.moveTo(x + o, 0); ctx.lineTo(x + o, 1024); ctx.stroke(); });
+  }
+  return new THREE.CanvasTexture(canvas);
+}
+const panelTexture = createSolarPanelTexture();
+
+function clearGroup(g) {
+  while (g.children.length) {
+    const o = g.children[0];
+    g.remove(o);
+    o.traverse && o.traverse(n => { if (n.geometry) n.geometry.dispose(); if (n.material) [].concat(n.material).forEach(m => m.dispose && m.dispose()); });
+  }
+}
+
+function build3DStructure() {
+  if (!solarGroup) return;
+  clearGroup(solarGroup);
+
+  const rows = state.rows, cols = state.cols, type = state.structureType, frontH = state.frontHeight;
+  const t = (state.tilt * Math.PI) / 180, sinT = Math.sin(t), cosT = Math.max(0.2, Math.cos(t)), tanT = Math.tan(Math.min(t, 1.5));
+  const pW = state.panelWidth, pL = state.panelLength, gap = 0.05;
+  const totalX = cols * (pW + gap), totalY = rows * (pL + gap);
+  const Dz = Math.max(0.05, (totalY / 2) * Math.cos(t));                 // half horizontal depth of the array
+  const lift = (type === 'sandwich' || type === 'minirail') ? 3 : 0;     // building height under roof-mounted types
+  const cy = lift + frontH + (totalY / 2) * sinT;                        // height of array centre
+  const yP = z => cy - z * tanT;                                         // panel plane height at depth z
+  const yB = z => yP(z) - 0.16 / cosT;                                   // centre of support beams (just under the rails)
+
+  const panelMat = new THREE.MeshStandardMaterial({ map: panelTexture, roughness: 0.25, metalness: 0.65 });
+  const frameMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.4, metalness: 0.8 });
+  const steel = new THREE.MeshStandardMaterial({ color: type === 'pergola' ? 0x2b2b30 : 0x64748b, roughness: 0.5, metalness: 0.7 });
+  const conc = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.95 });
+  const deckMat = new THREE.MeshStandardMaterial({ color: 0x3f4b5e, roughness: 0.9 });
+
+  /* ---- solar array (panels + rails, in tilted local space) ---- */
+  const arr = new THREE.Group();
+  const cellGeo = new THREE.BoxGeometry(pW, pL, 0.04);
+  const edgeGeo = new THREE.EdgesGeometry(cellGeo);
+  const edgeMat = new THREE.LineBasicMaterial({ color: 0xcfd8dc });
+  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+    const g = new THREE.Group();
+    const m = new THREE.Mesh(cellGeo, panelMat); m.castShadow = true; m.receiveShadow = true;
+    g.add(m); g.add(new THREE.LineSegments(edgeGeo, edgeMat));
+    g.position.set((c - cols / 2 + 0.5) * (pW + gap), (r - rows / 2 + 0.5) * (pL + gap), 0);
+    arr.add(g);
+  }
+  const railGeo = new THREE.BoxGeometry(totalX * 1.03, 0.08, 0.08);
+  const railPos = [];
+  for (let r = 0; r < rows; r++) [0.3, 0.7].forEach(f => {
+    const ly = (r - rows / 2 + f) * (pL + gap);
+    const rail = new THREE.Mesh(railGeo, frameMat); rail.position.set(0, ly, -0.065); arr.add(rail);
+    railPos.push(ly);
+  });
+  arr.rotation.x = -Math.PI / 2 + t;
+  arr.position.set(0, cy, 0);
+  solarGroup.rotation.y = ((state.azimuth - 180) * Math.PI) / 180;
+  solarGroup.add(arr);
+
+  /* ---- supporting structure (world space of solarGroup) ---- */
+  const rack = new THREE.Group();
+  const V = (x, y, z) => new THREE.Vector3(x, y, z);
+  const mesh = (g, m, x, y, z) => { const o = new THREE.Mesh(g, m); o.position.set(x, y, z); o.castShadow = true; o.receiveShadow = true; rack.add(o); return o; };
+  const beam = (a, b, w, m, h) => {
+    const d = b.clone().sub(a), L = d.length(); if (L < 0.02) return null;
+    const o = new THREE.Mesh(new THREE.BoxGeometry(w, h || w, L), m);
+    o.position.copy(a).addScaledVector(d, 0.5);
+    o.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), d.clone().normalize());
+    o.castShadow = true; rack.add(o); return o;
+  };
+  const post = (x, z, y0, y1, w, m) => { if (y1 - y0 < 0.05) return null; return mesh(new THREE.BoxGeometry(w, y1 - y0, w), m, x, (y0 + y1) / 2, z); };
+  const foot = (x, z) => mesh(new THREE.BoxGeometry(0.45, 0.12, 0.45), conc, x, 0.06, z);
+  const zA = Dz * 0.97, zF = Dz * 0.78, zR = -Dz * 0.78, deckTop = 0.14;
+  const slope = (x, m, w) => beam(V(x, yB(zA), zA), V(x, yB(-zA), -zA), w || 0.1, m, 0.1);
+  const deck = () => mesh(new THREE.BoxGeometry(totalX * 1.15, deckTop, 2 * Dz + 1.2), deckMat, 0, deckTop / 2, 0);
+  const nP = Math.max(2, Math.ceil(cols / 3));
+  const xs = [...Array(nP).keys()].map(p => (p / (nP - 1) - 0.5) * totalX * 0.85);
+
+  if (type === 'carport') {                        // cantilever carport: one row of columns, sloped beams
+    xs.forEach(x => {
+      const zp = -0.35 * Dz;
+      slope(x, steel, 0.14); foot(x, zp);
+      post(x, zp, 0.12, yB(zp), 0.24, steel);
+      beam(V(x, yB(zp) - 0.9, zp), V(x, yB(zA * 0.55) - 0.06, zA * 0.55), 0.09, steel);
+    });
+
+  } else if (type === 'pergola') {                 // four-sided pergola: posts, edge beams and slender rafters
+    xs.forEach(x => { slope(x, steel, 0.12); [zF, zR].forEach(z => { foot(x, z); post(x, z, 0.12, yB(z) - 0.1, 0.2, steel); }); });
+    [zF, zR].forEach(z => mesh(new THREE.BoxGeometry(totalX * 1.04, 0.12, 0.16), steel, 0, yB(z) - 0.1, z));
+    for (let x = -totalX / 2; x <= totalX / 2 + 0.01; x += 1.2) slope(x, steel, 0.06);
+
+  } else if (type === 'ground') {                  // rammed piles
+    xs.forEach(x => {
+      slope(x, steel, 0.1);
+      [zF, zR].forEach(z => mesh(new THREE.CylinderGeometry(0.06, 0.06, yB(z) + 0.6, 12), steel, x, (yB(z) - 0.6) / 2, z));
+      beam(V(x, 0.3, zF), V(x, yB(zR) - 0.35, zR), 0.05, steel);
+    });
+
+  } else if (type === 'aframe') {                  // flat-roof A-frames on a deck
+    deck();
+    xs.forEach(x => {
+      slope(x, steel, 0.1);
+      [zF, zR].forEach(z => post(x, z, deckTop, yB(z), 0.1, steel));
+      beam(V(x, deckTop + 0.05, zF), V(x, deckTop + 0.05, zR), 0.08, steel);
+      beam(V(x, deckTop, zF), V(x, yB(zR) - 0.05, zR), 0.06, steel);
+    });
+
+  } else if (type === 'ballasted') {               // concrete ballast blocks, no roof penetration
+    deck();
+    xs.forEach(x => {
+      slope(x, steel, 0.09);
+      [zF, zR].forEach(z => { mesh(new THREE.BoxGeometry(0.5, 0.26, 0.7), conc, x, deckTop + 0.13, z); post(x, z, deckTop + 0.26, yB(z), 0.07, steel); });
+    });
+
+  } else if (type === 'multitier') {               // raised two-level frame with bracing
+    deck();
+    xs.forEach((x, i) => {
+      slope(x, steel, 0.1);
+      [zF, zR].forEach(z => post(x, z, deckTop, yB(z), 0.12, steel));
+      const mid = z => (deckTop + yB(z)) / 2;
+      beam(V(x, mid(zF), zF), V(x, mid(zR), zR), 0.07, steel);
+      if (i < xs.length - 1) [zF, zR].forEach(z => {
+        beam(V(x, deckTop + 0.1, z), V(xs[i + 1], yB(z) - 0.1, z), 0.05, steel);
+        beam(V(x, yB(z) - 0.1, z), V(xs[i + 1], deckTop + 0.1, z), 0.05, steel);
+      });
+    });
+    [zF, zR].forEach(z => mesh(new THREE.BoxGeometry(totalX * 0.86 + 0.2, 0.08, 0.1), steel, 0, (deckTop + yB(z)) / 2, z));
+
+  } else if (type === 'monopole') {                // single central mast with torque tube and arms
+    const top = yB(0) - 0.12;
+    mesh(new THREE.CylinderGeometry(0.14, 0.24, top, 16), steel, 0, top / 2, 0);
+    mesh(new THREE.BoxGeometry(0.8, 0.12, 0.8), conc, 0, 0.06, 0);
+    mesh(new THREE.BoxGeometry(totalX * 0.96, 0.16, 0.16), steel, 0, top, 0);
+    xs.forEach(x => slope(x, steel, 0.08));
+
+  } else if (type === 'sandwich' || type === 'minirail') {   // parallel mounting on a pitched building roof
+    const yR = z => yP(z) - Math.max(frontH, 0.2);
+    const zf = Dz * 1.12, zr = -Dz * 1.12, len = totalX * 1.12;
+    const sh = new THREE.Shape();
+    sh.moveTo(-zf, 0); sh.lineTo(-zr, 0); sh.lineTo(-zr, yR(zr)); sh.lineTo(-zf, yR(zf)); sh.closePath();
+    const g = new THREE.ExtrudeGeometry(sh, { depth: len, bevelEnabled: false });
+    g.rotateY(Math.PI / 2); g.translate(-len / 2, 0, 0);
+    mesh(g, new THREE.MeshStandardMaterial({ color: type === 'minirail' ? 0x2f3b4d : 0x3b4a5f, roughness: 0.85 }), 0, 0, 0);
+    if (type === 'minirail')                       // corrugated ribs
+      for (let x = -len / 2 + 0.2; x < len / 2; x += 0.32)
+        beam(V(x, yR(zf) + 0.02, zf), V(x, yR(zr) + 0.02, zr), 0.06, frameMat, 0.05);
+    railPos.forEach(ly => xs.forEach(x => {        // clamps from roof up to each rail
+      const yTop = cy + ly * sinT - 0.105 * Math.cos(t), zb = -ly * Math.cos(t) - 0.105 * sinT;
+      post(x, zb, yR(zb), yTop, 0.09, frameMat);
+    }));
+
+  } else if (type === 'facade') {                  // vertical BIPV facade on a wall
+    const wallH = frontH + totalY + 0.8, zW = -Dz - 0.28;
+    mesh(new THREE.BoxGeometry(totalX * 1.2, wallH, 0.3), new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.9 }), 0, wallH / 2, zW - 0.15);
+    xs.forEach(x => [0.15, 0.5, 0.85].forEach(k => {
+      const y = frontH + totalY * sinT * k, zp = (cy - y) / tanT;
+      beam(V(x, y - 0.105 * Math.cos(t), zW), V(x, y - 0.105 * Math.cos(t), zp - 0.105 * sinT), 0.08, steel);
+    }));
+  }
+
+  solarGroup.add(rack);
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+  if (controls) controls.update();
+  if (renderer && scene && camera) renderer.render(scene, camera);
+}
+
+window.onload = function () {
+  init3D();
+  const t = new Date();
+  setText('propDate', `${t.getFullYear()}/${t.getMonth() + 1}/${t.getDate()}`);
+  buildFinanceTab(); buildSettings(); foldSettings(); buildCalcTab(); buildClimateTab(); initRoof();
+  onInverterChange(); onBatteryChange(); onPanelChange();
+  $('invSize').value = 12; $('batSize').value = 10.24; $('panelSize').value = 585;
+  onInverterChange(); onBatteryChange(); onPanelChange();
+};
+</script>
+<script>
+function hideSplash(){var s=document.getElementById('splash');if(!s||s.dataset.d)return;s.dataset.d=1;s.classList.add('out');setTimeout(function(){s.remove();try{onWindowResize()}catch(e){}},900);}
+setTimeout(hideSplash,4600);
+</script>
+</body>
+</html>
