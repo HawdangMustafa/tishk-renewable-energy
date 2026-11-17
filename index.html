@@ -22,29 +22,156 @@ tailwind.config = { darkMode: 'class', theme: { extend: { fontFamily: { sans: ['
     .inp { @apply w-full bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-center font-bold; }
     .sel { @apply w-full bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-slate-200; }
     .big { @apply w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none; }
-    .cell { @apply bg-slate-900 p-2 rounded border border-slate-800; }
-    .row { @apply flex justify-between; }
-    .tab-btn { @apply flex-1 py-2 px-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800 transition flex items-center justify-center gap-1.5; }
-    .hdr { @apply flex items-center justify-between border-b border-slate-800 pb-2; }
-    .metric { @apply bg-slate-900/90 border border-slate-800 p-3.5 rounded-2xl flex flex-col justify-between shadow-lg; }
-    .metric-h { @apply flex items-center justify-between text-slate-400 text-xs mb-1; }
+    /* Make SVG chart texts dark on white background */
+    #dash svg text { fill: #1e293b !important; }
+    #dash svg circle[stroke="#1e293b"] { stroke: #e2e8f0 !important; }
+    #dash svg text[fill="#fff"] { fill: #0f172a !important; }
+    #officialProposalPaper input { border-bottom: 1px solid #94a3b8 !important; color: #0f172a !important; }
+    #prop3dWrap { break-inside: avoid !important; page-break-inside: avoid !important; }
   }
 </style>
 <style>
   body { font-family: 'Vazirmatn', system-ui, sans-serif; -webkit-font-smoothing: antialiased; user-select: none; -webkit-user-select: none; }
   #panelPreset,#inverterBrand,#batteryBrand{order:2}.ord1{order:1}.ord3{order:3}#tabContent-settings{order:2}#dash,#dash *{-webkit-print-color-adjust:exact;print-color-adjust:exact}#setGrid>div:nth-child(1){background:linear-gradient(135deg,#78350f66,#0f172a)}#setGrid>div:nth-child(2){background:linear-gradient(135deg,#88133766,#0f172a)}#setGrid>div:nth-child(3){background:linear-gradient(135deg,#5b21b666,#0f172a)}#setGrid>div:nth-child(4){background:linear-gradient(135deg,#0c4a6e66,#0f172a)}#setGrid>div:nth-child(5){background:linear-gradient(135deg,#06503766,#0f172a)}#setGrid>div:nth-child(6){background:linear-gradient(135deg,#134e4a66,#0f172a)}
-  /* FIX 1: allow typing in fields (iOS/Safari) */
   input, select, textarea { -webkit-user-select: text; user-select: text; }
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: #0f172a; }
   ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
   ::-webkit-scrollbar-thumb:hover { background: #10b981; }
   .tab-btn.active { background: #059669; color: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.4); }
+  @page {
+    size: A4 portrait;
+    margin: 12mm;
+  }
   @media print {
-    body * { visibility: hidden; }
-    #printProposalModal, #printProposalModal * { visibility: visible; }
-    #printProposalModal { position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0; background: white !important; color: black !important; display: block !important; }
-    .no-print { display: none !important; }
+    html, body {
+      background: #ffffff !important;
+      color: #0f172a !important;
+      height: auto !important;
+      min-height: 0 !important;
+      overflow: visible !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    body > *:not(#printProposalModal) {
+      display: none !important;
+    }
+    #printProposalModal {
+      position: static !important;
+      inset: auto !important;
+      display: block !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
+      background: #ffffff !important;
+      backdrop-filter: none !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      box-shadow: none !important;
+    }
+    #printProposalModal > div {
+      position: static !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
+      background: #ffffff !important;
+      color: #0f172a !important;
+      border: none !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+    .no-print {
+      display: none !important;
+    }
+    #officialProposalPaper {
+      color: #0f172a !important;
+    }
+    #officialProposalPaper .bg-slate-950,
+    #officialProposalPaper .bg-slate-900,
+    #officialProposalPaper .bg-slate-900\/50 {
+      background-color: #f8fafc !important;
+      border-color: #cbd5e1 !important;
+      color: #0f172a !important;
+    }
+    #officialProposalPaper .bg-emerald-950\/30 {
+      background-color: #ecfdf5 !important;
+      border-color: #6ee7b7 !important;
+      color: #065f46 !important;
+    }
+    #officialProposalPaper .border-slate-800,
+    #officialProposalPaper .border-slate-800\/80,
+    #officialProposalPaper .border-slate-700,
+    #officialProposalPaper .divide-slate-800\/80 > :not([hidden]) ~ :not([hidden]) {
+      border-color: #cbd5e1 !important;
+    }
+    #officialProposalPaper .text-white,
+    #officialProposalPaper .text-slate-100,
+    #officialProposalPaper .text-slate-200,
+    #officialProposalPaper .text-slate-300,
+    #officialProposalPaper input {
+      color: #0f172a !important;
+    }
+    #officialProposalPaper .text-slate-400,
+    #officialProposalPaper .text-slate-500 {
+      color: #475569 !important;
+    }
+    #officialProposalPaper .text-emerald-400,
+    #officialProposalPaper .text-emerald-500 {
+      color: #047857 !important;
+    }
+    #officialProposalPaper .text-emerald-300 {
+      color: #065f46 !important;
+    }
+    #officialProposalPaper .text-amber-400 {
+      color: #b45309 !important;
+    }
+    #officialProposalPaper .text-teal-400 {
+      color: #0f766e !important;
+    }
+    #officialProposalPaper .text-blue-400 {
+      color: #1d4ed8 !important;
+    }
+    #officialProposalPaper .text-rose-400 {
+      color: #be123c !important;
+    }
+    /* Keep gradient KPI cards crisp with white text */
+    #dash .bg-gradient-to-br,
+    #dash .bg-gradient-to-br * {
+      color: #ffffff !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    /* Make SVG chart labels legible on light background */
+    #dash svg text {
+      fill: #1e293b !important;
+    }
+    #dash svg circle[stroke="#1e293b"] {
+      stroke: #e2e8f0 !important;
+    }
+    /* Prevent awkward page breaks across cards, charts, and table rows */
+    #officialProposalPaper > div,
+    #dash > div,
+    #dash .rounded-2xl,
+    #officialProposalPaper table tr,
+    #officialProposalPaper .grid > div {
+      break-inside: avoid !important;
+      page-break-inside: avoid !important;
+    }
+    #officialProposalPaper table {
+      border-collapse: collapse !important;
+      width: 100% !important;
+    }
+    #officialProposalPaper thead {
+      display: table-header-group !important;
+    }
   }
 </style>
 <style>
@@ -170,12 +297,11 @@ html,body{overflow-x:hidden}
 
         <div class="grid grid-cols-2 gap-3 text-xs">
           <div class="fld"><label class="lb">ژمارەی ڕیز (Rows):</label>
-            <div class="flex items-center gap-2"><input type="number" id="structRows" min="1" max="10" value="2" oninput="updateSystemCalculations()" class="inp text-white"><span class="text-slate-500">ڕیز</span></div></div>
+            <div class="flex items-center gap-2"><input type="number" id="structRows" min="1" max="16" value="2" oninput="updateSystemCalculations()" class="inp text-white"><span class="text-slate-500">ڕیز</span></div></div>
           <div class="fld"><label class="lb">ژمارەی ستوون (Cols):</label>
-            <div class="flex items-center gap-2"><input type="number" id="structCols" min="1" max="30" value="10" oninput="updateSystemCalculations()" class="inp text-white"><span class="text-slate-500">لوحە</span></div></div>
+            <div class="flex items-center gap-2"><input type="number" id="structCols" min="1" max="40" value="10" oninput="updateSystemCalculations()" class="inp text-white"><span class="text-slate-500">لوحە</span></div></div>
           <div class="fld"><label class="lb">پلەی لاربوونەوە (Tilt Angle):</label>
             <div class="flex items-center justify-between gap-2">
-              <!-- FIX 3: max=90 so facade (85°) works -->
               <input type="range" id="structTilt" min="0" max="90" value="18" oninput="document.getElementById('tiltVal').innerText = this.value + '°'; updateSystemCalculations();" class="w-full accent-emerald-500">
               <span id="tiltVal" class="font-bold text-emerald-400 text-xs w-8 text-left">18°</span>
             </div></div>
@@ -295,7 +421,6 @@ html,body{overflow-x:hidden}
             <div class="cell"><span class="text-slate-500 block text-[10px]">L3</span><span class="font-bold text-amber-400" id="phaseL3">-</span></div>
           </div>
         </div>
-        <!-- FIX 5: DC/AC ratio check -->
         <div class="fld text-xs">
           <div class="row"><span class="text-slate-400">توانای ئینڤێرتەر (AC):</span><span id="invPowerLabel" class="font-bold text-slate-200">-</span></div>
           <div id="dcAcRatio" class="font-bold text-teal-400 mt-1.5">-</div>
@@ -330,7 +455,7 @@ html,body{overflow-x:hidden}
         </div>
         <div class="grid grid-cols-2 gap-3 text-xs">
           <div class="fld"><label class="lb">ژمارەی یەکەی پاتری (Units):</label>
-            <div class="flex items-center gap-2"><input type="number" id="batteryQty" min="1" max="10" value="2" oninput="updateSystemCalculations()" class="inp text-blue-400"><span class="text-slate-400">یەکە</span></div></div>
+            <div class="flex items-center gap-2"><input type="number" id="batteryQty" min="1" max="30" value="2" oninput="updateSystemCalculations()" class="inp text-blue-400"><span class="text-slate-400">یەکە</span></div></div>
           <div class="fld"><span class="lb">کۆی گشتی وزەی کۆکراوە:</span><span id="totalBatteryKwh" class="font-bold text-blue-400 text-sm">-</span></div>
           <div class="fld"><span class="lb">قووڵی بەکارهێنان (DoD):</span><span id="dodTxt" class="font-bold text-slate-200">-</span></div>
           <div class="fld"><span class="lb">تەمەنی کارکردن (Cycle Life):</span><span id="cycTxt" class="text-emerald-400 font-bold">-</span></div>
@@ -339,6 +464,7 @@ html,body{overflow-x:hidden}
           <div class="row"><span class="text-slate-400">کاتی بەردەوامی لە کاتی نەبوونی کارەبا:</span><span id="backupHours" class="font-bold text-white">-</span></div>
           <div class="row"><span class="text-slate-400">پەیوەندی BMS:</span><span class="text-blue-300 font-semibold">CAN / RS485 لەگەڵ ئینڤێرتەر</span></div>
         </div>
+        <div id="battWarn" class="text-[11px] text-amber-300 leading-relaxed"></div>
       </div>
 
       <div id="tabContent-rwnaki" class="tab-pane hidden flex flex-col gap-4"></div>
@@ -423,8 +549,16 @@ html,body{overflow-x:hidden}
         <div><span class="text-slate-400 block">توانای پڕۆژە:</span><strong id="propKwpCapacity" class="text-amber-400">-</strong></div>
       </div>
 
-      <div>
+      <div id="prop3dWrap" class="bg-slate-950 p-3 rounded-2xl border border-slate-800 space-y-2">
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-bold text-slate-200 flex items-center gap-1.5"><i class="fa-solid fa-solar-panel text-amber-400"></i><span>وێنەی ئەندازیاری ٣ ڕەهەندی ستراکچەر و لوحەکان (3D CAD Preview)</span></span>
+          <span id="prop3dCaption" class="text-[11px] text-slate-400">-</span>
         </div>
+        <div class="rounded-xl overflow-hidden border border-slate-800 bg-slate-900 flex items-center justify-center">
+          <img id="prop3dImage" alt="3D Solar Structure Preview" class="w-full max-h-[260px] object-contain block">
+        </div>
+      </div>
+
       <div id="dash" class="space-y-3"></div>
       <div>
         <h3 class="font-bold text-base text-white mb-2 flex items-center gap-2"><i class="fa-solid fa-list-check text-emerald-400"></i><span>خشتەی کەرەستە و پێکهاتەی ئەندازیاری (BOM)</span></h3>
@@ -490,7 +624,6 @@ const structureNames = {
   facade: 'فەساد و دیواری بینا (BIPV Wall Facade)', multitier: 'فرە ئاستی بەرزکراوە (Multi-Tier Roof Racks)'
 };
 
-/* FIX 4/5: per-model data */
 const MONO = 'تاک ڕوو (Monofacial)', BIFI = 'دوو ڕوو (Bifacial +15%)';
 
 /* ---------- UI HELPERS ---------- */
@@ -502,7 +635,6 @@ function switchTab(tabId) {
   if (b) b.classList.add('active');
 }
 function setText(id, v) { const el = document.getElementById(id); if (el) el.innerText = v; }
-// reads a number; keeps 0 as valid (FIX 2)
 function readNum(id, fallback, isFloat) {
   const v = isFloat ? parseFloat(document.getElementById(id).value) : parseInt(document.getElementById(id).value);
   return isNaN(v) ? fallback : v;
@@ -525,15 +657,16 @@ function buildCF(cost,ms,bat){
 function paybackOf(cf){let c=cf[0];for(let y=1;y<cf.length;y++){const n=c+cf[y];if(n>=0)return y-1+(-c)/cf[y];c=n;}return null;}
 function schedule3D(){clearTimeout(window._t3);window._t3=setTimeout(build3DStructure,120);}
 function updateSystemCalculations() {
-  state.rows = clamp(readNum('structRows', 2), 1, 10);
-  state.cols = clamp(readNum('structCols', 10), 1, 30);
-  state.tilt = clamp(readNum('structTilt', 18), 0, 90);          // FIX 2: 0 allowed
+  if (window._booting) return;
+  state.rows = clamp(readNum('structRows', 2), 1, 16);
+  state.cols = clamp(readNum('structCols', 10), 1, 40);
+  state.tilt = clamp(readNum('structTilt', 18), 0, 90);
   state.azimuth = readNum('structAzimuth', 180);
   state.frontHeight = clamp(readNum('frontHeight', 2.3, true), 0.1, 5);
   state.panelWatt = Math.max(1, readNum('panelWatt', 585));
   state.systemTopology = document.getElementById('systemTopology').value;
   state.phase = document.getElementById('inverterPhase').value;
-  state.batteryQty = clamp(readNum('batteryQty', 2), 1, 10);
+  state.batteryQty = clamp(readNum('batteryQty', 2), 1, 30);
   state.monthlyKwhUse = Math.max(0, readNum('monthlyKwhUse', 1600, true));
   state.generatorCost = Math.max(0, readNum('generatorCost', 150000, true));
 
@@ -544,21 +677,19 @@ function updateSystemCalculations() {
 
   syncClimate();
   const PR = clamp(N('prInput', 83), 30, 100) / 100;
-  const [dailySummer, dailySpring, dailyAutumn, dailyWinter] = [N('psh1', 6.5), N('psh2', 5.2), N('psh3', 4.5), N('psh4', 3)].map(h => totalKwp * h * PR);
   const annualKwh = Math.round(monthlyPSH().reduce((a, h, i) => a + totalKwp * PR * h * MDAY[i], 0));
   const monthlyAvgKwh = Math.round(annualKwh / 12);
 
   const annualCo2Tons = (annualKwh * 0.55 / 1000);
   const annualTrees = Math.round((annualKwh * 0.55) / 21.7);
 
-  // FIX 7: degradation: 1% first year, then 0.4%/year -> 23.55x first-year output over 25 years
   const kwh25 = Math.round(annualKwh * (25 * (1 - N('degY1', 1) / 100) - N('degYr', 0.4) / 100 * 300));
   const co2_25 = kwh25 * 0.55 / 1000;
   const trees25 = Math.round(kwh25 * 0.55 / 21.7);
 
   const preSolarTotal = Math.round(calcRwnakiBill(state.monthlyKwhUse) + state.generatorCost);
   state.dod = /Lead|Gel/i.test(state.batteryName) ? 0.5 : 0.9;
-  setText('dodTxt', state.dod === 0.5 ? '50%' : '90% - 95%'); setText('cycTxt', state.dod === 0.5 ? '500 - 1,200 خول' : '6,000+ خول');
+  setText('dodTxt', state.dod === 0.5 ? '50%' : '90% - 95%'); setText('cycTxt', state.dod === 0.5 ? '500 - 1,200 خول' : '6,000+ خول'); setText('battWarn', battCheck(state.batteryQty, N('nightKw', 2)).join(' '));
   const usableBat = totalBatteryKwh * state.dod * 0.95, nightE = Math.max(0.1, N('nightKw', 2) * N('autonomyH', 8));
   const selfHybEff = N('selfOn', 60) + (N('selfHyb', 90) - N('selfOn', 60)) * Math.min(1, usableBat / nightE);
   let postSolarHybrid = Math.round(calcRwnakiBill(Math.max(0, state.monthlyKwhUse - monthlyAvgKwh * selfHybEff / 100)));
@@ -576,7 +707,6 @@ function updateSystemCalculations() {
 
   const acKw = Math.min(totalKwp, state.inverterPowerKw), phaseAmp = ((acKw * 1000) / (state.phase === '3phase' ? 1.732 * 380 * 0.95 : 220 * 0.95)).toFixed(1), oneP = state.phase === '1phase';
 
-  // Header & dashboard
   setText('headerTotalKwp', `${totalKwp.toFixed(2)} kWp`);
   setText('headerAnnualKwh', `${annualKwh.toLocaleString()} kWh`);
   setText('structTotalPanels', `${totalPanels} لوح`);
@@ -585,16 +715,10 @@ function updateSystemCalculations() {
   setText('dashMonthlyKwh', monthlyAvgKwh.toLocaleString());
   setText('dashCo2Tons', annualCo2Tons.toFixed(1));
   setText('dashTreesCount', annualTrees.toLocaleString());
-  setText('seasonSummer', `${dailySummer.toFixed(1)} kWh`);
-  setText('seasonSpring', `${dailySpring.toFixed(1)} kWh`);
-  setText('seasonAutumn', `${dailyAutumn.toFixed(1)} kWh`);
-  setText('seasonWinter', `${dailyWinter.toFixed(1)} kWh`);
 
-  // Battery
   setText('totalBatteryKwh', `${totalBatteryKwh.toFixed(2)} kWh`);
   setText('backupHours', totalBatteryKwh > 0 ? `نزیکەی ${(totalBatteryKwh * state.dod * 0.95 / Math.max(0.1, N('nightKw', 2))).toFixed(1)} کاتژمێر (بارگرانی ${N('nightKw', 2)}kW)` : 'بێ پاتری');
 
-  // Inverter
   setText('phaseL1', `${phaseAmp} A`); setText('phaseL2', oneP ? '—' : `${phaseAmp} A`); setText('phaseL3', oneP ? '—' : `${phaseAmp} A`);
   setText('invPowerLabel', `${state.inverterPowerKw} kW`);
   const ratio = totalKwp / state.inverterPowerKw;
@@ -604,14 +728,12 @@ function updateSystemCalculations() {
   ratioEl.className = 'font-bold mt-1.5 ' + ((ratio > 1.5 || ratio < 0.9) ? 'text-amber-400' : 'text-teal-400');
   if (/On-Grid/i.test(state.inverterName) && state.systemTopology !== 'ongrid') { ratioEl.innerText += ' | ⚠ ئینڤێرتەری On-Grid پاتری پشتگیری ناکات'; ratioEl.className = 'font-bold mt-1.5 text-amber-400'; }
 
-  // Finance
   setText('billPreSolar', `${preSolarTotal.toLocaleString()} دینار`);
   setText('billPostHybrid', `${postSolarHybrid.toLocaleString()} دینار`);
   setText('billPostOngrid', `${postSolarOngrid.toLocaleString()} دینار`);
   setText('monthlySavings', `${monthlySavings.toLocaleString()} دینار`);
   setText('roiYears', roiYears === '-' ? '-' : `نزیکەی ${roiYears} ساڵ`);
 
-  // Proposal
   const topo = state.systemTopology === 'hybrid' ? 'هایبرید ' : state.systemTopology === 'ongrid' ? 'ئۆن-گرید ' : 'ئۆف-گرید ';
   setText('propSystemType', topo + (state.phase === '3phase' ? '(سێ فەیز 380V)' : '(سینگڵ فەیز 220V)'));
   setText('propKwpCapacity', `${totalKwp.toFixed(2)} kWp DC`);
@@ -630,7 +752,6 @@ function updateSystemCalculations() {
   setText('prop25yrCo2', `${co2_25.toFixed(1)} تەن`);
   setText('prop25yrTrees', `${trees25.toLocaleString()} درەخت`);
 
-  // Compass label
   const azNames = { 180: 'باشوور', 160: 'باشووری ڕۆژهەڵات', 200: 'باشووری ڕۆژئاوا', 90: 'ڕۆژهەڵات', 270: 'ڕۆژئاوا' };
   setText('compassLabel', `${azNames[state.azimuth] || ''} (${state.azimuth}°)`);
 
@@ -693,7 +814,6 @@ const CAT = {
     'Freedomwon': { 'Lite Home LiFePO4': { s: [5, 10, 15] } }
   }
 };
-/* ---- extra models (dimensions/sizes are approximate: verify with datasheet) ---- */
 const mkP = (s, d, bi) => ({ s, d, bi }), mkI = (s, ph) => ({ s, ph }), mkB = s => ({ s });
 const addM = (t, b, m) => { CAT[t][b] = Object.assign(CAT[t][b] || {}, m); };
 const CUS = 'دەستی (Custom)';
@@ -902,11 +1022,11 @@ function renderReport() {
     + `<div class="grid grid-cols-3 gap-3">${mini('تێچووی پڕۆژە', '$' + fmt(k.costUsd), 'text-amber-400')}${mini('CO₂ ٢٥ ساڵ', k.co2_25.toFixed(1) + ' تەن', 'text-teal-400')}${mini('بەرامبەر درەخت', fmt(k.trees25), 'text-emerald-400')}</div>`;
 }
 function buildCalcTab() {
-  const F = [['loadKw', 'بارگرانی لووتکە kW (لە تابی ٨)', 6], ['nightKw', 'بارگرانی شەو kW (لە تابی ٨)', 2], ['autonomyH', 'کاتژمێری شەو (لە تابی ٨)', 8], ['cover', 'ئامانجی پوشاندن %', 90], ['vocP', 'Voc ی لوحە (V)', 51.8], ['iscP', 'Isc ی لوحە (A)', 14.4], ['mpptMax', 'MPPT زۆرترین V', 1000], ['mpptMin', 'MPPT کەمترین V', 180], ['mpptN', 'ژمارەی MPPT', 2], ['mpptI', 'MPPT زۆرترین A', 32], ['tMin', 'کەمترین گەرما °C', -10], ['disc', 'Discount Rate %', 8]];
+  const F = [['loadKw', 'بارگرانی لووتکە kW (لە تابی ٨)', 6], ['nightKw', 'بارگرانی شەو kW (لە تابی ٨)', 2], ['autonomyH', 'کاتژمێری شەو (لە تابی ٨)', 8], ['vocP', 'Voc ی لوحە (V)', 51.8], ['iscP', 'Isc ی لوحە (A)', 14.4], ['mpptMax', 'MPPT زۆرترین V', 1000], ['mpptMin', 'MPPT کەمترین V', 180], ['mpptN', 'ژمارەی MPPT', 2], ['mpptI', 'MPPT زۆرترین A', 32], ['tMin', 'کەمترین گەرما °C', -10], ['disc', 'Discount Rate %', 8]];
   const d = document.createElement('div');
   d.id = 'tabContent-calc'; d.className = 'tab-pane hidden flex flex-col gap-4';
   d.innerHTML = `<div class="rounded-2xl p-4 bg-gradient-to-br from-fuchsia-600 via-violet-600 to-indigo-600 text-white shadow-lg"><div class="text-sm font-black">🧮 حیسابی تەواوی سیستەم</div><div class="text-[11px] opacity-90">ئەنجامەکان خۆکارانە لەگەڵ هەر گۆڕانکارییەک نوێ دەبنەوە</div></div>
-  <details class="fld text-xs"><summary class="font-bold cursor-pointer text-slate-200">✏️ ئینپوتەکان (دەستکاری بکە)</summary><div class="grid grid-cols-2 gap-2 mt-2">${F.map(([id, l, v]) => `<div><label class="lb">${l}</label><input id="${id}" type="number" step="any" value="${v}" oninput="updateSystemCalculations()" ${['loadKw', 'nightKw', 'autonomyH'].includes(id) ? 'readonly' : ''} class="inp text-white"></div>`).join('')}</div></details>
+  <details class="fld text-xs"><summary class="font-bold cursor-pointer text-slate-200">✏️ ئینپوتەکان (دەستکاری بکە)</summary><div class="text-[11px] text-amber-300 mt-1.5">ℹ️ خانەکانی بارگرانی و کاتژمێری شەو ڕاستەوخۆ لە <b>تابی ٨ (حیسابی خۆکار)</b> وەردەگیرێن.</div><div class="grid grid-cols-2 gap-2 mt-2">${F.map(([id, l, v]) => `<div><label class="lb">${l}</label><input id="${id}" type="number" step="any" value="${v}" oninput="updateSystemCalculations()" ${['loadKw', 'nightKw', 'autonomyH'].includes(id) ? 'readonly' : ''} class="inp text-white ${['loadKw', 'nightKw', 'autonomyH'].includes(id) ? 'opacity-70 cursor-not-allowed' : ''}"></div>`).join('')}</div></details>
   <div id="calcOut" class="flex flex-col gap-3"></div>`;
   $('tabContent-rwnaki').parentNode.appendChild(d);
 }
@@ -917,26 +1037,22 @@ function renderCalc() {
   const row = (l, v, c = 'text-white') => `<div class="row"><span class="text-slate-400">${l}</span><span class="font-bold ${c}">${v}</span></div>`;
   const W = state.panelWatt, P = k.totalPanels, kwp = k.totalKwp, use = Math.max(1, state.monthlyKwhUse);
   const psh = (N('psh1', 6.5) + N('psh2', 5.2) + N('psh3', 4.5) + N('psh4', 3)) / 4;
-  const needKwp = use * N('cover', 90) / 100 / (psh * 30 * k.PR), needP = Math.ceil(needKwp * 1000 / W);
+  const AD = autoDesign(autoLoads(), state.systemTopology, N('aMargin', 20), state.systemTopology === 'offgrid' ? N('aAut', 1) : 1), needKwp = AD.kWpA, needP = AD.nP;
   const covAct = k.monthlyAvgKwh / use * 100;
   const area = P * state.panelLength * state.panelWidth * 1.15;
-  // strings
   const voc = N('vocP', 51.8), isc = N('iscP', 14.4), nM = Math.max(1, N('mpptN', 2));
   const vocCold = voc * (1 + 0.0025 * (25 - N('tMin', -5)));
   const sMax = Math.max(1, Math.floor(N('mpptMax', 1000) / vocCold)), sMin = Math.max(1, Math.ceil(N('mpptMin', 180) / (voc * 0.84 * 0.87)));
   let s = Math.min(sMax, P); for (let t = Math.min(sMax, P); t >= sMin; t--) if (P % t === 0) { s = t; break; }
   const strs = Math.ceil(P / s), perM = Math.ceil(strs / nM);
   const okS = s >= sMin && s <= sMax && P % s === 0, okI = perM * isc <= N('mpptI', 32);
-  // inverter / battery
-  const kw = state.inverterPowerKw, ratio = kwp / kw, recKw = Math.max(N('loadKw', 6) * 1.25, kwp / 1.3);
+  const kw = state.inverterPowerKw, ratio = kwp / kw, recKw = AD.invKw;
   const night = Math.max(0.1, N('nightKw', 2)), aut = N('autonomyH', 8), unit = state.batteryUnitKwh;
-  const needBat = night * aut / (state.dod * 0.95), needU = Math.ceil(needBat / unit), bat = k.totalBatteryKwh, hrs = bat * state.dod * 0.95 / night;
-  // protection
-  const three = state.phase === '3phase', iAc = kw * 1000 / (three ? 1.732 * 380 : 220);
+  const needBat = AD.batTot, needU = AD.bq, bat = k.totalBatteryKwh, hrs = bat * state.dod * 0.95 / night;
+  const three = state.phase === '3phase', iAc = kw * 1000 / ((three ? 1.732 * 380 : 220) * 0.95);
   const brk = [10, 16, 20, 25, 32, 40, 50, 63, 80, 100, 125, 160].find(x => x >= iAc * 1.25) || '>160';
   const cab = (a, t) => { for (const [m, x] of t) if (a <= x) return m + ' mm²'; return '>' + t[t.length - 1][0] + ' mm²'; };
   const dcCab = cab(isc * 1.25, [[4, 40], [6, 55], [10, 75]]), acCab = cab(iAc * 1.25, [[4, 25], [6, 32], [10, 45], [16, 60], [25, 80], [35, 100], [50, 125]]);
-  // finance
   const ys = k.monthlySavings * 12, r = N('disc', 8) / 100, cf = k.cf;
   const npv = cf.reduce((a, v, y) => a + v / Math.pow(1 + r, y), 0);
   let lo = -0.5, hi = 2; for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2; (cf.reduce((a, c, y) => a + c / Math.pow(1 + m, y), 0) > 0) ? lo = m : hi = m; }
@@ -951,7 +1067,7 @@ function renderCalc() {
   const kpi = (t, v, g2) => `<div class="rounded-2xl p-3 text-white bg-gradient-to-br ${g2} shadow"><div class="text-[10px] opacity-90">${t}</div><div class="font-black text-sm mt-1">${v}</div></div>`;
   o.innerHTML = `<div class="grid grid-cols-2 gap-2">${kpi('⚡ توانای سیستەم', f1(kwp, 2) + ' kWp', 'from-amber-500 to-orange-600')}${kpi('💵 تێچووی پڕۆژە', '$' + fmt(k.costUsd), 'from-sky-500 to-blue-700')}${kpi('⏳ گەڕانەوەی سەرمایە', pb === null ? '—' : f1(pb) + ' ساڵ', 'from-rose-500 to-pink-600')}${kpi('📈 NPV ی ٢٥ ساڵ', fmt(npv / fx) + ' $', 'from-emerald-500 to-teal-700')}</div>`
     + sec('1️⃣ بارگرانی و مەسرەف', 'from-slate-600 to-slate-800', row('مەسرەفی مانگانە', fmt(use) + ' kWh') + row('مەسرەفی ڕۆژانە', f1(use / 30) + ' kWh') + row('بارگرانی لووتکە', N('loadKw', 6) + ' kW') + row('بارگرانی شەو', night + ' kW'))
-    + sec('2️⃣ لوحەکان', 'from-amber-500 to-orange-600', row('پێویست بۆ ئامانج', needP + ' لوح (' + f1(needKwp, 2) + ' kWp)') + row('دانراو', P + ' لوح (' + f1(kwp, 2) + ' kWp)', 'text-amber-400') + row('پوشاندنی مەسرەف', f1(covAct, 0) + '% ' + bd(covAct >= N('cover', 90) - 5, 'گونجاو', 'کەمە')) + row('ڕووبەری پێویست', f1(area) + ' m²') + row('بەرهەمی ساڵانە', fmt(k.annualKwh) + ' kWh') + row('Specific Yield', fmt(k.annualKwh / kwp) + ' kWh/kWp'))
+    + sec('2️⃣ لوحەکان', 'from-amber-500 to-orange-600', row('پێویست بۆ ئامانج', needP + ' لوح (' + f1(needKwp, 2) + ' kWp)') + row('دانراو', P + ' لوح (' + f1(kwp, 2) + ' kWp)', 'text-amber-400') + row('پوشاندنی مەسرەف', f1(covAct, 0) + '% ' + bd(covAct >= 85, 'گونجاو', 'کەمە')) + row('ڕووبەری پێویست', f1(area) + ' m²') + row('بەرهەمی ساڵانە', fmt(k.annualKwh) + ' kWh') + row('Specific Yield', fmt(k.annualKwh / kwp) + ' kWh/kWp'))
     + sec('3️⃣ ستەرینگ و MPPT', 'from-lime-500 to-green-600', row('Voc لە سەرمای ' + N('tMin', -5) + '°C', f1(vocCold) + ' V') + row('ژمارەی لوح لە هەر ستەرینگ', s + ' (ڕێگەپێدراو ' + sMin + '–' + sMax + ') ' + bd(okS, 'باشە', 'ڕێکبخە')) + row('ژمارەی ستەرینگ', strs + ' (' + perM + ' بۆ هەر MPPT)') + row('جەریان لە MPPT', f1(perM * isc) + ' A ' + bd(okI, 'باشە', 'زۆرە')))
     + sec('4️⃣ ئینڤێرتەر', 'from-teal-500 to-cyan-600', row('توانای دانراو', kw + ' kW') + row('پێشنیارکراو (کەمترین)', f1(recKw) + ' kW', 'text-teal-300') + row('DC/AC', f1(ratio, 2) + ' ' + bd(ratio >= 0.9 && ratio <= 1.5, 'گونجاو', 'نەگونجاو')))
     + sec('5️⃣ پاتری', 'from-blue-500 to-indigo-600', row('پێویست بۆ ' + aut + ' کاتژمێر', f1(needBat) + ' kWh (' + needU + ' یەکە)') + row('دانراو', f1(bat) + ' kWh (' + (state.systemTopology === 'ongrid' ? 0 : state.batteryQty) + ' یەکە)', 'text-blue-300') + row('کاتی پشتگیری', f1(hrs) + ' کاتژمێر ' + bd(hrs >= aut, 'تەواو', 'کەمە')))
@@ -960,8 +1076,6 @@ function renderCalc() {
     + sec('8️⃣ ژینگە', 'from-emerald-500 to-green-700', row('CO₂ ی ساڵانە', f1(k.annualCo2Tons) + ' تەن') + row('CO₂ ی ٢٥ ساڵ', f1(k.co2_25) + ' تەن') + row('بەرامبەر درەخت (٢٥ ساڵ)', fmt(k.trees25)));
 }
 
-/* tab 5 v3: simple finance view (replaces the earlier buildFinanceTab) */
-/* tab 5 v4: minimal finance view (overrides earlier versions) */
 function buildFinanceTab() {
   const old = $('tabContent-settings'); if (old) old.remove();
   const inp = (id, l, v) => `<label class="block"><span class="text-[11px] text-slate-400">${l}</span><input type="number" id="${id}" value="${v}" oninput="updateSystemCalculations()" class="mt-1 w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm font-bold text-white text-center"></label>`;
@@ -1008,14 +1122,13 @@ function renderFin() {
 /* ===== climate & city production model ===== */
 const MDAY = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31], NMID = [17, 47, 75, 105, 135, 162, 198, 228, 258, 288, 318, 344];
 const MN = ['کانوونی دووەم', 'شوبات', 'ئازار', 'نیسان', 'ئایار', 'حوزەیران', 'تەمموز', 'ئاب', 'ئەیلوول', 'تشرینی یەکەم', 'تشرینی دووەم', 'کانوونی یەکەم'];
-const CAL = { // NASA POWER via profileSOLAR: avg daily irradiation on the optimum-tilted plane [summer, autumn, winter, spring] kWh/m²/day + tilt
+const CAL = {
   Erbil: [8.61, 5.00, 3.02, 6.57, 31], Duhok: [8.58, 4.99, 3.26, 6.73, 31], Mosul: [8.36, 4.98, 3.17, 6.54, 31], Nineveh: [8.57, 4.95, 3.21, 6.71, 31],
   Sulaymaniyah: [8.56, 5.19, 3.31, 6.75, 30], Kirkuk: [8.50, 5.12, 3.43, 6.85, 30], Kelar: [8.64, 5.25, 3.49, 6.93, 30], Tikrit: [8.46, 5.14, 3.59, 7.00, 30],
   Samarra: [8.53, 5.16, 3.62, 7.00, 29], Baqubah: [8.32, 5.22, 3.69, 6.98, 29], Baghdad: [8.32, 5.22, 3.69, 6.98, 29], Ramadi: [8.32, 5.16, 3.75, 7.03, 29],
   Karbala: [8.29, 5.31, 3.74, 7.09, 28], Kut: [8.33, 5.29, 3.73, 7.08, 28], Qadisiyah: [8.22, 5.26, 3.81, 7.08, 28], Samawah: [8.18, 5.32, 3.87, 7.09, 27],
   Nasiriyah: [8.31, 5.38, 3.85, 7.13, 27], Amarah: [8.32, 5.38, 3.83, 6.99, 27], Basra: [8.41, 5.68, 4.20, 7.26, 27]
 };
-// region|name|lat|Kt summer|Kt winter|mean temp °C|temp amplitude °C|data ref|scale|flag (empty = own NASA data, 1 = nearest city's data, 2 = rough estimate)
 const CITIES = `هەرێمی کوردستان|هەولێر - Erbil|36.19|.68|.44|20.5|14|Erbil|1|
 هەرێمی کوردستان|سلێمانی - Sulaymaniyah|35.56|.68|.43|18.5|13.5|Sulaymaniyah|1|
 هەرێمی کوردستان|دهۆک - Duhok|36.87|.67|.40|19|13|Duhok|1|
@@ -1099,7 +1212,7 @@ function syncClimate() {
   if (!$('cLat')) return;
   const P = [N('cLat', 36.19), N('cKs', 0.68), N('cKw', 0.44), N('cTm', 20.5), N('cTa', 14)];
   const c = climMonthly(...P, state.tilt, state.azimuth), cal = calOf($('climCity').value);
-  if (cal) {   // calibrate the model to the measured/NASA seasonal values of the chosen city
+  if (cal) {
     const b = climMonthly(...P, cal.t0, 180), sm = ix => ix.reduce((a, i) => a + b[i].HT, 0) / 3;
     const r = [cal.s[0] / sm([5, 6, 7]), cal.s[1] / sm([8, 9, 10]), cal.s[2] / sm([11, 0, 1]), cal.s[3] / sm([2, 3, 4])];
     const A = [[0, r[2]], [3, r[3]], [6, r[0]], [9, r[1]], [12, r[2]]];
@@ -1109,7 +1222,7 @@ function syncClimate() {
     c.forEach((x, m) => { x.HT *= f[m]; });
   }
   const lt = 1 - N('lossTemp', 8) / 100;
-  const eff = c.map(x => x.HT * (1 - Math.max(0, 0.003 * (x.T + 0.6 * (x.Tx - x.T)))) / lt);   // cell ≈ daytime ambient (mean + 60% of day swing) + 25°C, -0.3%/°C above 25°C
+  const eff = c.map(x => x.HT * (1 - Math.max(0, 0.003 * (x.T + 0.6 * (x.Tx - x.T)))) / lt);
   window._clim = { c, eff };
   const auto = $('climAuto').checked;
   [[1, [5, 6, 7]], [2, [2, 3, 4]], [3, [8, 9, 10]], [4, [11, 0, 1]]].forEach(([k, ix]) => {
@@ -1229,8 +1342,8 @@ function syncRoof3D(...parts) {
   const cl = new THREE.Group(); parts.forEach(q => cl.add(q.clone(true))); const lift = ['sandwich', 'minirail'].includes(state.structureType) ? 3 : 0;
   if (lift > 0) cl.traverse(m => { if (m.isMesh && new THREE.Box3().setFromObject(m).max.y <= lift + 0.02) m.visible = false; });
   const box = new THREE.Box3(); cl.traverse(m => { if (m.isMesh && m.visible) box.expandByObject(m); });
-  const c = box.getCenter(new THREE.Vector3()), z = box.getSize(new THREE.Vector3());
-  cl.position.set(-c.x, -lift, -c.z); roofHold.add(cl); roofHold.userData.size = Math.max(z.x, z.z, 1);
+  const c = box.getCenter(new THREE.Vector3()), z = box.getSize(new THREE.Vector3()), baseY = isFinite(box.min.y) ? box.min.y : lift;
+  cl.position.set(-c.x, -baseY, -c.z); roofHold.add(cl); roofHold.userData.size = Math.max(z.x, z.z, 1);
   if (!roof.fitSet) resetRoofView(); else redrawRoof();
 }
 function roofRender() {
@@ -1245,8 +1358,26 @@ function saveRoofPng() {
   const g = o.getContext('2d'); g.drawImage($('roofCanvas'), 0, 0, w, h); g.drawImage(roofR.domElement, 0, 0, w, h);
   const a = document.createElement('a'); a.download = 'solar-roof.png'; a.href = o.toDataURL('image/png'); a.click();
 }
-
+function printProposal() {
+  // Sync input values into attributes so they appear if cloned
+  document.querySelectorAll('#officialProposalPaper input').forEach(inp => inp.setAttribute('value', inp.value));
+  window.print();
+}
+function capture3DSnapshot() {
+  const img = document.getElementById('prop3dImage');
+  const cap = document.getElementById('prop3dCaption');
+  if (!img || !renderer || !scene || !camera) return;
+  try {
+    renderer.render(scene, camera);
+    img.src = renderer.domElement.toDataURL('image/png');
+    if (cap) {
+      const sName = structureNames[state.structureType] || '';
+      cap.innerText = `${sName.split(' (')[0]} | ${state.rows}×${state.cols} لوح | لاری ${state.tilt}°`;
+    }
+  } catch (e) {}
+}
 function openProposalModal() {
+  capture3DSnapshot();
   const m = document.getElementById('printProposalModal');
   m.classList.remove('hidden'); m.classList.add('flex');
 }
@@ -1269,7 +1400,7 @@ function init3D() {
   camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
   camera.position.set(7, 5, 10);
 
-  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
   renderer.setSize(width, height);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.shadowMap.enabled = true;
@@ -1374,11 +1505,11 @@ function build3DStructure() {
   const t = (state.tilt * Math.PI) / 180, sinT = Math.sin(t), cosT = Math.max(0.2, Math.cos(t)), tanT = Math.tan(Math.min(t, 1.5));
   const pW = state.panelWidth, pL = state.panelLength, gap = 0.05;
   const totalX = cols * (pW + gap), totalY = rows * (pL + gap);
-  const Dz = Math.max(0.05, (totalY / 2) * Math.cos(t));                 // half horizontal depth of the array
-  const lift = (type === 'sandwich' || type === 'minirail') ? 3 : 0;     // building height under roof-mounted types
-  const cy = lift + frontH + (totalY / 2) * sinT;                        // height of array centre
-  const yP = z => cy - z * tanT;                                         // panel plane height at depth z
-  const yB = z => yP(z) - 0.16 / cosT;                                   // centre of support beams (just under the rails)
+  const Dz = Math.max(0.05, (totalY / 2) * Math.cos(t));
+  const lift = (type === 'sandwich' || type === 'minirail') ? 3 : 0;
+  const cy = lift + frontH + (totalY / 2) * sinT;
+  const yP = z => cy - z * tanT;
+  const yB = z => yP(z) - 0.16 / cosT;
 
   const panelMat = new THREE.MeshStandardMaterial({ map: panelTexture, roughness: 0.25, metalness: 0.65 });
   const frameMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.4, metalness: 0.8 });
@@ -1429,7 +1560,7 @@ function build3DStructure() {
   const nP = Math.max(2, Math.ceil(cols / 3));
   const xs = [...Array(nP).keys()].map(p => (p / (nP - 1) - 0.5) * totalX * 0.85);
 
-  if (type === 'carport') {                        // cantilever carport: one row of columns, sloped beams
+  if (type === 'carport') {
     xs.forEach(x => {
       const zp = -0.35 * Dz;
       slope(x, steel, 0.14); foot(x, zp);
@@ -1437,19 +1568,19 @@ function build3DStructure() {
       beam(V(x, yB(zp) - 0.9, zp), V(x, yB(zA * 0.55) - 0.06, zA * 0.55), 0.09, steel);
     });
 
-  } else if (type === 'pergola') {                 // four-sided pergola: posts, edge beams and slender rafters
+  } else if (type === 'pergola') {
     xs.forEach(x => { slope(x, steel, 0.12); [zF, zR].forEach(z => { foot(x, z); post(x, z, 0.12, yB(z) - 0.1, 0.2, steel); }); });
     [zF, zR].forEach(z => mesh(new THREE.BoxGeometry(totalX * 1.04, 0.12, 0.16), steel, 0, yB(z) - 0.1, z));
     for (let x = -totalX / 2; x <= totalX / 2 + 0.01; x += 1.2) slope(x, steel, 0.06);
 
-  } else if (type === 'ground') {                  // rammed piles
+  } else if (type === 'ground') {
     xs.forEach(x => {
       slope(x, steel, 0.1);
       [zF, zR].forEach(z => mesh(new THREE.CylinderGeometry(0.06, 0.06, yB(z) + 0.6, 12), steel, x, (yB(z) - 0.6) / 2, z));
       beam(V(x, 0.3, zF), V(x, yB(zR) - 0.35, zR), 0.05, steel);
     });
 
-  } else if (type === 'aframe') {                  // flat-roof A-frames on a deck
+  } else if (type === 'aframe') {
     deck();
     xs.forEach(x => {
       slope(x, steel, 0.1);
@@ -1458,14 +1589,14 @@ function build3DStructure() {
       beam(V(x, deckTop, zF), V(x, yB(zR) - 0.05, zR), 0.06, steel);
     });
 
-  } else if (type === 'ballasted') {               // concrete ballast blocks, no roof penetration
+  } else if (type === 'ballasted') {
     deck();
     xs.forEach(x => {
       slope(x, steel, 0.09);
       [zF, zR].forEach(z => { mesh(new THREE.BoxGeometry(0.5, 0.26, 0.7), conc, x, deckTop + 0.13, z); post(x, z, deckTop + 0.26, yB(z), 0.07, steel); });
     });
 
-  } else if (type === 'multitier') {               // raised two-level frame with bracing
+  } else if (type === 'multitier') {
     deck();
     xs.forEach((x, i) => {
       slope(x, steel, 0.1);
@@ -1479,14 +1610,14 @@ function build3DStructure() {
     });
     [zF, zR].forEach(z => mesh(new THREE.BoxGeometry(totalX * 0.86 + 0.2, 0.08, 0.1), steel, 0, (deckTop + yB(z)) / 2, z));
 
-  } else if (type === 'monopole') {                // single central mast with torque tube and arms
+  } else if (type === 'monopole') {
     const top = yB(0) - 0.12;
     mesh(new THREE.CylinderGeometry(0.14, 0.24, top, 16), steel, 0, top / 2, 0);
     mesh(new THREE.BoxGeometry(0.8, 0.12, 0.8), conc, 0, 0.06, 0);
     mesh(new THREE.BoxGeometry(totalX * 0.96, 0.16, 0.16), steel, 0, top, 0);
     xs.forEach(x => slope(x, steel, 0.08));
 
-  } else if (type === 'sandwich' || type === 'minirail') {   // parallel mounting on a pitched building roof
+  } else if (type === 'sandwich' || type === 'minirail') {
     const yR = z => yP(z) - Math.max(frontH, 0.2);
     const zf = Dz * 1.12, zr = -Dz * 1.12, len = totalX * 1.12;
     const sh = new THREE.Shape();
@@ -1494,15 +1625,15 @@ function build3DStructure() {
     const g = new THREE.ExtrudeGeometry(sh, { depth: len, bevelEnabled: false });
     g.rotateY(Math.PI / 2); g.translate(-len / 2, 0, 0);
     mesh(g, new THREE.MeshStandardMaterial({ color: type === 'minirail' ? 0x2f3b4d : 0x3b4a5f, roughness: 0.85 }), 0, 0, 0);
-    if (type === 'minirail')                       // corrugated ribs
+    if (type === 'minirail')
       for (let x = -len / 2 + 0.2; x < len / 2; x += 0.32)
         beam(V(x, yR(zf) + 0.02, zf), V(x, yR(zr) + 0.02, zr), 0.06, frameMat, 0.05);
-    railPos.forEach(ly => xs.forEach(x => {        // clamps from roof up to each rail
+    railPos.forEach(ly => xs.forEach(x => {
       const yTop = cy + ly * sinT - 0.105 * Math.cos(t), zb = -ly * Math.cos(t) - 0.105 * sinT;
       post(x, zb, yR(zb), yTop, 0.09, frameMat);
     }));
 
-  } else if (type === 'facade') {                  // vertical BIPV facade on a wall
+  } else if (type === 'facade') {
     const wallH = frontH + totalY + 0.8, zW = -Dz - 0.28;
     mesh(new THREE.BoxGeometry(totalX * 1.2, wallH, 0.3), new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.9 }), 0, wallH / 2, zW - 0.15);
     xs.forEach(x => [0.15, 0.5, 0.85].forEach(k => {
@@ -1521,8 +1652,6 @@ function animate() {
   if (renderer && scene && camera) renderer.render(scene, camera);
   roofRender();
 }
-
-
 
 function boqCalc(sp) {
   const g = (id, d) => N(id, d), sx = (STRUCT_X[state.structureType] || 1) * (MAT_X[(document.getElementById('rackMaterial') || {}).value] || 1), L = [], man = (($('pMode') || {}).value === 'manual') ? (window._man || {}) : {};
@@ -1579,7 +1708,7 @@ function copyQuote() {
 }
 
 /* ===== AUTO SIZING: customer loads (Amps) -> panels, inverter, battery, cost ===== */
-const STD_INV = [3, 3.6, 5, 6, 8, 10, 12, 15, 20, 25, 30, 50], STD_BRK = [16, 20, 25, 32, 40, 50, 63, 80, 100, 125, 160];
+const STD_INV = [3, 3.6, 5, 6, 8, 10, 12, 15, 20, 25, 30, 40, 50, 60], STD_BRK = [16, 20, 25, 32, 40, 50, 63, 80, 100, 125, 160];
 const APP_PRESETS = [['سەلاجە', 150, 1, 12, 12, 1], ['فریزەر', 200, 1, 12, 12, 1], ['ئەیرکۆندیشن ١.٥ تەن', 1500, 1, 9, 7, 1], ['ئەیرکۆندیشن ٢ تەن', 2000, 1, 9, 7, 1], ['ڕووناکی LED', 10, 10, 0, 5, 0], ['تەلەفزیۆن', 120, 1, 4, 4, 0], ['ڕاوتەر و ئینتەرنێت', 20, 1, 12, 12, 0], ['جلشۆر', 500, 1, 1, 0, 1], ['پەمپی ئاو', 750, 1, 1.5, 0, 1], ['مایکرۆوەیڤ', 1200, 1, 0.5, 0.5, 0], ['هیتەر', 2000, 1, 0, 4, 0], ['کۆمپیوتەر', 150, 1, 6, 2, 0]];
 function saveApps() { try { localStorage.setItem('tishkApps', JSON.stringify(window._apps)); } catch (e) {} }
 function buildAutoTab() {
@@ -1596,7 +1725,7 @@ function buildAutoTab() {
   ${S('aSrc', '📥 بارگرانی چۆن دیاری بکرێت؟', '<option value="amps">بە ئەمپێر (ڕۆژ / شەو)</option><option value="apps">بە لیستی کەرەستە</option>', 'autoSrc()')}
   <div id="ampBox" class="flex flex-col gap-2"><div class="flex flex-wrap gap-1">${pre}</div><div class="grid grid-cols-2 gap-2">${I('aDay', 'ئەمپێری ڕۆژ (A)', 10)}${I('aNight', 'ئەمپێری شەو (A)', 6)}${I('hDay', 'کاتژمێری ڕۆژ', 10)}${I('hNight', 'کاتژمێری شەو', 14)}${I('aLf', 'بەکارهێنانی ڕاستەقینە % لە ئەمپێر', 70)}</div></div>
   <div id="appBox" class="flex flex-col gap-2" style="display:none"><div class="flex flex-wrap gap-1">${add}</div><div id="appList" class="flex flex-col gap-2"></div>${I('aDiv', 'هاوکاتبوونی کەرەستەکان % (بۆ لووتکە)', 70)}</div>
-  <div class="grid grid-cols-2 gap-2">${S('aMode', 'جۆری سیستەم', '<option value="hybrid">هایبرید (پاتری + حکومی)</option><option value="ongrid">On-Grid (بێ پاتری)</option><option value="offgrid">Off-Grid</option>')}${S('aPh', 'فەیز', '<option value="1">یەک فەیز</option><option value="3">سێ فەیز (ئەمپێر بۆ هەر فەیز)</option>')}${I('aV', 'ڤۆڵت (V)', 220)}${I('aPf', 'Power Factor', 0.9)}${I('aMargin', 'پشتی ئاسایش %', 20)}${I('aAut', 'ڕۆژی پشتگیری (Off-Grid)', 1)}</div>
+  <div class="grid grid-cols-2 gap-2">${S('aMode', 'جۆری سیستەم', '<option value="hybrid">هایبرید (پاتری + حکومی)</option><option value="ongrid">On-Grid (بێ پاتری)</option><option value="offgrid">Off-Grid</option>')}${S('aPh', 'فەیز', '<option value="1">یەک فەیز (220V)</option><option value="3">سێ فەیز (220V/فەیز یان 380V)</option>')}${I('aV', 'ڤۆڵت (V)', 220)}${I('aPf', 'Power Factor', 0.9)}${I('aMargin', 'پشتی ئاسایش %', 20)}${I('aAut', 'ڕۆژی پشتگیری (Off-Grid)', 1)}</div>
   ${S('pMode', '💰 شێوازی نرخ و بڕ', '<option value="auto">ئۆتۆماتیک (نرخی بنەڕەت)</option><option value="manual">مانوێڵ (خۆم بڕ و نرخ دەنووسم)</option>', 'onPrice()')}
   <div id="autoOut" class="flex flex-col gap-3"></div><div id="boqBox"></div><div id="priceBox"></div>`;
   $('tabContent-rwnaki').parentNode.appendChild(d);
@@ -1620,18 +1749,36 @@ function autoLoads() {
     const dv = N('aDiv', 70) / 100, Pd = pd * dv, Pn = pn * dv;
     return { V, pf, k, Pd, Pn, Ed, En, surge: sg, hd: Pd > 0 ? Ed / Pd : 0, hn: Pn > 0 ? En / Pn : 0 };
   }
-  const Pd = k * V * N('aDay', 10) * pf / 1000, Pn = k * V * N('aNight', 6) * pf / 1000, hd = N('hDay', 10), hn = N('hNight', 14), lf = N('aLf', 70) / 100;
+  const vMult = k === 3 ? (V >= 350 ? 1.732 : 3) : 1;
+  const Pd = vMult * V * N('aDay', 10) * pf / 1000, Pn = vMult * V * N('aNight', 6) * pf / 1000, hd = N('hDay', 10), hn = N('hNight', 14), lf = N('aLf', 70) / 100;
   return { V, pf, k, Pd, Pn, Ed: Pd * hd * lf, En: Pn * hn * lf, surge: 0, hd, hn };
 }
 function onAuto() { const L = autoLoads(), set = (id, v) => { const e = $(id); if (e) e.value = v; }; set('loadKw', Math.max(L.Pd, L.Pn).toFixed(2)); set('nightKw', L.Pn.toFixed(2)); set('autonomyH', L.hn.toFixed(1)); updateSystemCalculations(); }
 function autoPreset(a, n) { $('aDay').value = a; $('aNight').value = n; onAuto(); }
 function autoPick(i) { window._autoPick = i; renderAuto(); }
+const BAT_T = { Dyness: 'LV', Pylontech: 'LV', Deye: 'LV', BYD: 'HV', Huawei: 'Huawei', Felicity: 'LV', Growatt: 'LV', Sungrow: 'Sungrow', Tesla: 'Tesla', Freedomwon: 'LV' };
+const INV_T = { Deye: 'LV', Huawei: 'Huawei', Growatt: 'HV', Sungrow: 'Sungrow', SMA: 'HV', Solis: 'HV', Victron: 'LV', GoodWe: 'HV', Fronius: 'HV', Sofar: 'HV' };
+function battCheck(bq, Pn) {
+  const w = []; if (state.systemTopology === 'ongrid') return w;
+  const bn = state.batteryName || '', inn = state.inverterName || '', bB = Object.keys(BAT_T).find(x => bn.startsWith(x)), iB = Object.keys(INV_T).find(x => inn.startsWith(x));
+  const bt = bB && BAT_T[bB], it = iB && INV_T[iB];
+  if (bt && it) {
+    if (bt === 'Tesla') w.push('⚠ Powerwall سیستەمی تایبەتە و بە ئینڤێرتەری تر ناگونجێت.');
+    else if ((bt === 'Huawei' || bt === 'Sungrow') && bB !== iB) w.push(`⚠ پاتری ${bB} تەنها لەگەڵ ئینڤێرتەری ${bB} کار دەکات.`);
+    else if ((it === 'Huawei' || it === 'Sungrow') && bB !== iB) w.push(`⚠ ئینڤێرتەری ${iB} تەنها پاتری ${iB} قبوڵ دەکات.`);
+    else if (bt !== it && ['LV', 'HV'].includes(bt) && ['LV', 'HV'].includes(it)) w.push(`⚠ پاتری ${bt === 'LV' ? 'ڤۆڵتی نزم (48V)' : 'ڤۆڵتی بەرز (HV)'} لەگەڵ ئینڤێرتەری ${it === 'LV' ? 'ڤۆڵتی نزم' : 'ڤۆڵتی بەرز'} ناگونجێت.`);
+  }
+  const pw = bq * (state.batteryUnitKwh || 10) * 0.5;
+  if (Pn > pw) w.push(`⚠ هێزی دەرچوونی پاتری (≈${pw.toFixed(1)}kW، مەزەندەی 0.5C) لە بارگرانی شەو (${Pn.toFixed(1)}kW) کەمترە.`);
+  if (w.length) w.push('ℹ ئەمە ڕێنمایی گشتییە؛ لە datasheet ی ئینڤێرتەر و پاتری دڵنیابە.');
+  return w;
+}
 function autoDesign(L, mode, mgPct, aut) {
-  const mg = 1 + mgPct / 100, PR = N('prInput', 83) / 100, ps = monthlyPSH(), avg = ps.reduce((a, b) => a + b, 0) / 12, psh = mode === 'offgrid' ? Math.min(...ps) : avg;
+  const mg = 1 + mgPct / 100, PR = N('prInput', 83) / 100, ps = monthlyPSH(), avg = ps.reduce((a, b) => a + b, 0) / 12, psh = mode === 'offgrid' ? [...ps].sort((a, b) => a - b).slice(0, 3).reduce((a, b) => a + b, 0) / 3 : avg;
   const dod = state.dod || 0.9, unit = state.batteryUnitKwh || 10, hasBat = mode !== 'ongrid', wp = state.panelWatt;
-  const bq = hasBat ? Math.ceil(L.En * aut * mg / (dod * 0.95) / unit) : 0, batTot = bq * unit;
+  const bqE = hasBat ? Math.ceil(L.En * aut * mg / (dod * 0.95) / unit) : 0, bq = hasBat ? Math.max(bqE, Math.ceil(L.Pn * mg / (0.5 * unit))) : 0, batTot = bq * unit;
   const kWp = (L.Ed + (hasBat ? L.En / 0.9 : 0)) * mg / (psh * PR), nP = Math.max(1, Math.ceil(kWp * 1000 / wp)), kWpA = nP * wp / 1000;
-  const need = Math.max(Math.max(L.Pd, L.Pn) * mg + L.surge, mode === 'ongrid' ? kWpA / 1.2 : 0), invKw = STD_INV.find(x => x >= need) || Math.ceil(need);
+  const need = Math.max(Math.max(L.Pd, L.Pn) * mg + L.surge, kWpA / (mode === 'ongrid' ? 1.2 : 1.4)), invKw = STD_INV.find(x => x >= need) || Math.ceil(need);
   return { nP, kWpA, invKw, bq, batTot, hasBat, psh, B: boqCalc({ nP, wp, kWp: kWpA, invKw, batKwh: batTot, batQty: bq }), monthly: ps.map((h, m) => kWpA * PR * h * MDAY[m]) };
 }
 function renderAuto() {
@@ -1639,10 +1786,11 @@ function renderAuto() {
   const fmt = n => Number(n).toLocaleString('en-US'), L = autoLoads(), mode = $('aMode').value || 'hybrid', V = L.V, k = L.k, m0 = N('aMargin', 20), a0 = mode === 'offgrid' ? N('aAut', 1) : 1;
   const P = [['💚 ئابووری', Math.max(0, m0 - 15), a0 * 0.7], ['⭐ پێشنیار', m0, a0], ['💎 باشترین', m0 + 20, a0 + (mode === 'offgrid' ? 1 : 0.5)]].map(([n, mg, au]) => ({ n, ...autoDesign(L, mode, mg, au) }));
   const manual = $('pMode').value === 'manual', pick = Math.min(2, window._autoPick ?? 1), D = P[pick], B = D.B, tot = B.total, fx = B.fx, unit = state.batteryUnitKwh || 10;
-  const iAc = D.invKw * 1000 / (k === 3 ? 1.732 * 380 : V) * 1.25, brk = STD_BRK.find(x => x >= iAc) || Math.ceil(iAc), cab = brk <= 32 ? 4 : brk <= 40 ? 6 : brk <= 55 ? 10 : brk <= 75 ? 16 : 25;
+  const vAc = k === 3 ? (V >= 350 ? 1.732 * V : 1.732 * 380) : V;
+  const iAc = D.invKw * 1000 / (vAc * 0.95) * 1.25, brk = STD_BRK.find(x => x >= iAc) || Math.ceil(iAc), cab = brk <= 32 ? 4 : brk <= 40 ? 6 : brk <= 55 ? 10 : brk <= 75 ? 16 : 25;
   const area = D.nP * (state.panelLength || 2.2) * (state.panelWidth || 1.1) * 1.15, PRv = N('prInput', 83) / 100;
   window._autoB = D.B;
-  window._auto = { nP: D.nP, bq: D.bq, invKw: D.invKw, mode, rows: Math.min(D.nP, Math.max(2, Math.ceil(D.nP / 20))) };
+  window._auto = { nP: D.nP, bq: D.bq, invKw: D.invKw, mode, rows: Math.min(16, D.nP, Math.max(2, Math.ceil(D.nP / 20))) };
   const pk = P.map((x, i) => `<button onclick="autoPick(${i})" class="rounded-2xl p-2 text-center border ${i === pick ? 'border-emerald-400 bg-emerald-950/50' : 'border-slate-800 bg-slate-950'}"><div class="text-[11px] font-black text-white">${x.n}</div><div class="text-[10px] text-slate-400 mt-1">${x.kWpA.toFixed(1)}kWp · ${x.invKw}kW${x.hasBat ? ' · ' + x.bq + '🔋' : ''}</div><div class="text-xs font-black text-amber-300 mt-1">$${fmt(Math.round(x.B.total))}</div></button>`).join('');
   const kp = (t, v, g) => `<div class="rounded-2xl p-3 text-white bg-gradient-to-br ${g} shadow"><div class="text-[10px] opacity-90">${t}</div><div class="font-black text-sm mt-1">${v}</div></div>`;
   const bars = D.monthly.map((p, m) => { const need = (L.Ed + (D.hasBat ? L.En / 0.9 : 0)) * MDAY[m], c = Math.min(100, p / Math.max(1, need) * 100), col = c >= 100 ? '#10b981' : c >= 70 ? '#f59e0b' : '#ef4444'; return `<div class="flex-1 flex flex-col items-center gap-1"><div class="w-full bg-slate-800 rounded h-16 flex items-end"><div style="height:${c}%;background:${col}" class="w-full rounded"></div></div><span class="text-[9px] text-slate-500">${m + 1}</span></div>`; }).join('');
@@ -1650,11 +1798,14 @@ function renderAuto() {
   if (k === 1 && D.invKw > 8) warn.push('⚠ بارگرانی گەورەیە؛ سێ فەیز باشترە.');
   if (D.hasBat && L.Pn > D.invKw) warn.push('⚠ ئینڤێرتەر لە بارگرانی شەو کەمترە.');
   if (L.surge > 0) warn.push(`ℹ بۆ دەستپێکردنی مۆتۆڕ (سەلاجە، کوولەر، پەمپ) ${L.surge.toFixed(1)} kW بۆ ئینڤێرتەر زیاد کرا.`);
-  if (mode === 'offgrid') warn.push('ℹ Off-Grid بۆ کەمترین مانگی تیشک (' + D.psh.toFixed(1) + ' kWh/m²) دیزاین کراوە.');
+  if (D.nP > 640) warn.push('⚠ ژمارەی لوح (' + D.nP + ') لە سنووری ٣D (٦٤٠) زیاترە؛ «بەکارهێنان» کورت دەکرێتەوە.');
+  if (D.bq > 30) warn.push('⚠ ژمارەی پاتری (' + D.bq + ') لە سنووری پڕۆژە (٣٠) زیاترە.');
+  if (D.hasBat) battCheck(D.bq, L.Pn).forEach(x => warn.push(x));
+  if (mode === 'offgrid') warn.push('ℹ Off-Grid بۆ تێکڕای ٣ مانگی کەمترین تیشک (' + D.psh.toFixed(1) + ' kWh/m²) دیزاین کراوە.');
   o.innerHTML = `${manual ? '<div class="text-[11px] text-amber-300">✍️ شێوازی مانوێڵ: بڕ و نرخی هەر بەندێک لە خوارەوە دەستکاری دەکرێت (پاکێجەکان لێرە دەرنەکەون).</div>' : '<div class="grid grid-cols-3 gap-2">' + pk + '</div>'}
   <div class="grid grid-cols-2 gap-2">${kp('⚡ بارگرانی ڕۆژ / شەو', L.Pd.toFixed(2) + ' / ' + L.Pn.toFixed(2) + ' kW', 'from-slate-600 to-slate-800')}${kp('🔋 وزەی ڕۆژانە', (L.Ed + L.En).toFixed(1) + ' kWh', 'from-slate-600 to-slate-800')}
   ${kp('☀️ لوح', D.nP + ' × ' + state.panelWatt + 'W = ' + D.kWpA.toFixed(2) + ' kWp', 'from-amber-500 to-orange-600')}${kp('📐 شوێنی پێویست', area.toFixed(0) + ' م²', 'from-amber-600 to-yellow-700')}
-  ${kp('🔌 ئینڤێرتەر', D.invKw + ' kW · بریکەر ' + brk + 'A · کەیبڵ ' + cab + 'mm²', 'from-sky-500 to-blue-700')}${kp('🔋 پاتری', D.hasBat ? D.bq + ' × ' + unit + ' = ' + D.batTot.toFixed(1) + ' kWh' : 'بێ پاتری', 'from-lime-500 to-green-700')}</div>
+  ${kp('🔌 ئینڤێرتەر', D.invKw + ' kW (DC/AC ' + (D.kWpA / D.invKw).toFixed(2) + ') · بریکەر ' + brk + 'A · کەیبڵ ' + cab + 'mm²', 'from-sky-500 to-blue-700')}${kp('🔋 پاتری', D.hasBat ? D.bq + ' × ' + unit + ' = ' + D.batTot.toFixed(1) + ' kWh' : 'بێ پاتری', 'from-lime-500 to-green-700')}</div>
   <div class="rounded-2xl p-4 text-white bg-gradient-to-br from-rose-500 to-pink-700 shadow"><div class="text-[11px] opacity-90">💰 تێچووی گشتی (${P[pick].n})</div><div class="font-black text-lg">$${fmt(Math.round(tot))}</div><div class="text-[11px] opacity-90">≈ ${fmt(Math.round(tot * fx))} دینار</div></div>
   <div class="rounded-2xl border border-slate-800 bg-slate-950 p-3"><div class="text-[11px] text-slate-300 mb-2">📅 پێویستی هەر مانگێک چەند دابین دەکرێت (سەوز ≥١٠٠٪، زەرد ≥٧٠٪)</div><div class="flex gap-1" style="direction:ltr">${bars}</div><div class="text-[10px] text-slate-500 mt-1">بەرهەمی ساڵانە: ${fmt(Math.round(D.monthly.reduce((a, b) => a + b, 0)))} kWh</div></div>
   ${warn.length ? '<div class="text-[11px] text-amber-300">' + warn.join('<br>') + '</div>' : ''}
@@ -1665,12 +1816,13 @@ function renderAuto() {
 function applyAuto() {
   const a = window._auto; if (!a) return;
   $('systemTopology').value = a.mode; state.systemTopology = a.mode;
-  $('structRows').value = a.rows; $('structCols').value = Math.ceil(a.nP / a.rows);
-  if (a.mode !== 'ongrid') $('batteryQty').value = Math.max(1, a.bq);
+  $('structRows').value = a.rows; $('structCols').value = Math.min(40, Math.ceil(a.nP / a.rows));
+  if (a.mode !== 'ongrid') $('batteryQty').value = Math.min(30, Math.max(1, a.bq));
   const sel = $('invSize'), opts = [...sel.options].map(x => parseFloat(x.value)), pick = opts.length ? (opts.find(x => x >= a.invKw) || Math.max(...opts)) : a.invKw;
   if (opts.length) { sel.value = pick; onInverterChange(); }
+  const L = autoLoads(), monthly = Math.round((L.Ed + L.En) * 30); $('monthlyKwhUse').value = monthly;
   updateSystemCalculations();
-  setText('autoMsg', `✅ جێبەجێ کرا: ${a.rows} ڕیز × ${Math.ceil(a.nP / a.rows)} ستوون، ئینڤێرتەر ${pick}kW${a.mode !== 'ongrid' ? '، ' + Math.max(1, a.bq) + ' پاتری' : ''}.`);
+  setText('autoMsg', `✅ جێبەجێ کرا: ${a.rows} ڕیز × ${Math.min(40, Math.ceil(a.nP / a.rows))} ستوون، ئینڤێرتەر ${pick}kW${a.mode !== 'ongrid' ? '، ' + Math.min(30, Math.max(1, a.bq)) + ' پاتری' : ''}، بەکارهێنانی مانگانە ${monthly} kWh (پاشەکەوت و Payback بەپێی ئەمە).` + (pick < a.invKw ? ' ⚠ ئەم براندە ئینڤێرتەری ' + a.invKw + 'kW ی نییە؛ براندێکی تر لە تابی ٣ هەڵبژێرە.' : '') + (a.nP > 640 ? ' ⚠ لوحەکان کورت کران بۆ ٦٤٠.' : ''));
 }
 
 window.onload = function () {
@@ -1678,8 +1830,11 @@ window.onload = function () {
   const t = new Date();
   setText('propDate', `${t.getFullYear()}/${t.getMonth() + 1}/${t.getDate()}`);
   buildFinanceTab(); buildSettings(); foldSettings(); buildCalcTab(); buildClimateTab(); buildAutoTab(); buildPriceTab(); initRoof();
-  onInverterChange(); onBatteryChange(); onPanelChange();
-  $('invSize').value = 12; $('batSize').value = 10.24; $('panelSize').value = 585;
+  window._booting = true;
+  cascade('inverter', ['invBrand', 'inverterBrand', 'invSize'], 'kW'); $('invSize').value = 12;
+  cascade('battery', ['batBrand', 'batteryBrand', 'batSize'], 'kWh'); $('batSize').value = 10.24;
+  cascade('panel', ['panelBrand', 'panelPreset', 'panelSize'], 'W'); $('panelSize').value = 585;
+  window._booting = false;
   onInverterChange(); onBatteryChange(); onPanelChange(); onAuto();
 };
 </script>
